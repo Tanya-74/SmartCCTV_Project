@@ -16,7 +16,7 @@
   main{max-width:1100px;margin:0 auto;padding:20px 24px;display:grid;gap:20px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
   h2{font-size:14px;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-  button,select,input[type=file]{background:#0f1419;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit}
+  button,select,input[type=file],input[type=text]{background:#0f1419;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit}
   button{cursor:pointer;background:#2563eb;border-color:#2563eb}
   button:disabled{opacity:.5;cursor:default}
   button.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
@@ -49,6 +49,17 @@
       <select id="zone" title="Restricted zone"><option value="default">Restricted zone: default</option><option value="full">Restricted zone: whole frame</option></select>
       <button id="btn">Upload &amp; analyse</button>
       <span class="muted" id="upmsg"></span>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Connect a live camera</h2>
+    <form id="cam" class="row">
+      <input type="text" id="camurl" placeholder="rtsp://user:pass@192.168.1.64:554/stream1  (or 0 for a webcam)" required style="flex:1;min-width:280px">
+      <input type="text" id="camname" placeholder="Camera name (optional)" style="width:190px">
+      <select id="camzone"><option value="default">Zone: default</option><option value="full">Zone: whole frame</option></select>
+      <button id="cambtn">Start live analysis</button>
+      <span class="muted" id="cammsg"></span>
     </form>
   </section>
 
@@ -140,17 +151,30 @@ function startPolling(){
   }, 3000);
 }
 
+function fileRow(j){ return `<div class="job">
+      <div class="row" style="justify-content:space-between"><b>${escapeHtml(j.filename)}</b>
+        <span class="muted">${j.status}${j.pending_vlm?` &middot; waiting on AI for ${j.pending_vlm} clip(s)`:''}</span></div>
+      <div class="bar"><i style="width:${j.progress}%"></i></div>
+      <div class="muted">${j.progress}% &middot; ${j.breaches} zone breach(es) &middot; ${j.breaches_classified} analysed &middot; ${j.alerts_created} alert(s)
+        ${j.errors.length?` &middot; <span style="color:var(--s5)">${escapeHtml(j.errors[0])}</span>`:''}</div></div>`; }
+function streamRow(j){
+  const on = j.status==='live', active = ['live','connecting','reconnecting'].includes(j.status);
+  const col = on ? 'var(--s2)' : (j.status==='reconnecting'||j.status==='connecting' ? 'var(--s3)' : 'var(--muted)');
+  return `<div class="job">
+      <div class="row" style="justify-content:space-between"><b>&#128249; ${escapeHtml(j.filename)}</b>
+        <span class="row"><span style="color:${col};font-weight:700">&#9679; ${j.status.toUpperCase()}</span>
+        ${active?`<button class="ghost" onclick="stopStream('${j.id}')">Stop</button>`:''}</span></div>
+      <div class="muted">${escapeHtml(j.source)} &middot; ${j.fps} fps &middot; ${j.frames_processed} frames &middot; ${j.breaches} zone breach(es)
+        &middot; ${j.breaches_classified} analysed${j.pending_vlm?` (${j.pending_vlm} waiting)`:''}${j.skipped?` &middot; ${j.skipped} skipped (AI busy)`:''} &middot; ${j.alerts_created} alert(s)
+        ${j.errors.length?`<br><span style="color:var(--s3)">${escapeHtml(j.errors[j.errors.length-1])}</span>`:''}</div></div>`; }
+async function stopStream(id){ await fetch('/streams/'+id,{method:'DELETE'}); refreshStatus(); }
+
 // ---- status panel ----
 async function refreshStatus(){
   try{
     const s = await (await fetch('/status')).json();
     if(!s.jobs.length){ $('jobs').textContent='No videos yet.'; return; }
-    $('jobs').innerHTML = s.jobs.map(j=>`<div class="job">
-      <div class="row" style="justify-content:space-between"><b>${escapeHtml(j.filename)}</b>
-        <span class="muted">${j.status}${j.pending_vlm?` &middot; waiting on AI for ${j.pending_vlm} clip(s)`:''}</span></div>
-      <div class="bar"><i style="width:${j.progress}%"></i></div>
-      <div class="muted">${j.progress}% &middot; ${j.breaches} zone breach(es) &middot; ${j.breaches_classified} analysed &middot; ${j.alerts_created} alert(s)
-        ${j.errors.length?` &middot; <span style="color:var(--s5)">${escapeHtml(j.errors[0])}</span>`:''}</div></div>`).join('');
+    $('jobs').innerHTML = s.jobs.map(j=> j.kind==='stream' ? streamRow(j) : fileRow(j)).join('');
   }catch(e){}
 }
 
@@ -165,6 +189,16 @@ $('up').addEventListener('submit', async e=>{
     $('upmsg').textContent = 'Queued - analysing now.';
   }catch(err){ $('upmsg').textContent = 'Failed: ' + err.message; }
   $('btn').disabled = false; refreshStatus();
+});
+$('cam').addEventListener('submit', async e=>{
+  e.preventDefault(); $('cambtn').disabled = true; $('cammsg').textContent = 'Connecting...';
+  try{
+    const r = await fetch('/streams',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:$('camurl').value.trim(), name:$('camname').value.trim()||null, zone:$('camzone').value})});
+    if(!r.ok) throw new Error((await r.json()).detail || r.statusText);
+    $('cammsg').textContent = 'Started - see status below.'; $('camurl').value='';
+  }catch(err){ $('cammsg').textContent = 'Failed: ' + err.message; }
+  $('cambtn').disabled = false; refreshStatus();
 });
 $('fsev').onchange = $('ftype').onchange = render;
 $('clear').onclick = async()=>{ if(confirm('Delete all alerts?')){ await fetch('/alerts',{method:'DELETE'}); alerts=[]; seen.clear(); render(); } };

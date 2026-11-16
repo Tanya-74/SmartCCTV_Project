@@ -18,11 +18,13 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Web
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 
 import config
 from alerts import AlertStore
 from detection import Detector, Zone
 from tracking import ZoneMonitor
+from streams import LiveStream, mask_source, validate_source
 from vlm import VLMClassifier
 
 app = FastAPI(title="Smart CCTV")
@@ -37,6 +39,8 @@ job_queue: Queue = Queue()
 ws_clients: set[WebSocket] = set()
 _loop: asyncio.AbstractEventLoop | None = None
 vlm_pool = ThreadPoolExecutor(max_workers=2)
+live_streams: dict[str, LiveStream] = {}
+_pend_lock = threading.Lock()
 
 
 def parse_zone(spec: str):
@@ -45,10 +49,17 @@ def parse_zone(spec: str):
         return config.DEFAULT_ZONE
     if spec == "full":
         return [(0, 0), (1, 0), (1, 1), (0, 1)]
-    pts = [(float(x), float(y)) for x, y in json.loads(spec)]
-    if len(pts) < 3 or any(not (0 <= v <= 1) for p in pts for v in p):
-        raise ValueError
+    try:
+        pts = [(float(x), float(y)) for x, y in json.loads(spec)]
+        assert len(pts) >= 3 and all(0 <= v <= 1 for p in pts for v in p)
+    except Exception:
+        raise ValueError("zone must be 'default', 'full', or a JSON list of at least 3 [x,y] points, each between 0 and 1")
     return pts
+
+
+def _pend(job: dict, delta: int):
+    with _pend_lock:
+        job["pending_vlm"] += delta
 
 
 def get_vlm() -> VLMClassifier:
@@ -80,14 +91,16 @@ def _classify_and_alert(job: dict, breach, fps: float):
         job["breaches_classified"] += 1
         job["analyses"].append({"t": round(breach.timestamp_sec, 1), "event_type": res.event_type,
                                  "severity": res.severity, "description": res.description})
+        del job["analyses"][:-50]
         alert = store.maybe_create(res, breach.annotated_frame, job["filename"], breach.timestamp_sec)
         if alert:
             job["alerts_created"] += 1
             _broadcast(alert)
     except Exception as e:
         job["errors"].append(str(e)[:200])
+        del job["errors"][:-5]
     finally:
-        job["pending_vlm"] -= 1
+        _pend(job, -1)
 
 
 def process_video(job_id: str):
@@ -106,7 +119,7 @@ def process_video(job_id: str):
             _, breach = mon.process(frame)
             if breach:
                 job["breaches"] += 1
-                job["pending_vlm"] += 1
+                _pend(job, 1)
                 vlm_pool.submit(_classify_and_alert, job, breach, fps)
             n += 1
             if n % 15 == 0:
@@ -114,7 +127,7 @@ def process_video(job_id: str):
         tail = mon.flush()               # breach near the end of the video
         if tail:
             job["breaches"] += 1
-            job["pending_vlm"] += 1
+            _pend(job, 1)
             vlm_pool.submit(_classify_and_alert, job, tail, fps)
         job["progress"] = 100.0
         while job["pending_vlm"] > 0:      # wait for Gemini answers
@@ -139,6 +152,11 @@ async def startup():
     global _loop
     _loop = asyncio.get_running_loop()
     threading.Thread(target=worker, daemon=True).start()
+    if config.RTSP_URL:                      # optional auto-start from .env: RTSP_URL=rtsp://...
+        try:
+            start_stream(config.RTSP_URL, "LIVE (from .env)", "default")
+        except Exception as e:
+            print(f"RTSP_URL auto-start failed: {e}")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -166,6 +184,66 @@ async def upload(file: UploadFile = File(...), zone: str = Form("default")):
     return {"job_id": job_id, "status": "queued"}
 
 
+class StreamRequest(BaseModel):
+    url: str                      # rtsp://..., http(s)://... or a webcam number such as "0"
+    name: str | None = None       # label shown on the dashboard / in alerts
+    zone: str = "default"         # same options as /upload
+
+
+def _live_breach(job: dict, breach, fps: float):
+    """Called by a LiveStream for each breach. Skips it if Gemini is already far behind."""
+    if job["pending_vlm"] >= config.MAX_PENDING_VLM:
+        job["skipped"] += 1
+        return
+    _pend(job, 1)
+    vlm_pool.submit(_classify_and_alert, job, breach, fps)
+
+
+def start_stream(url: str, name: str | None, zone: str) -> dict:
+    source = validate_source(url)                       # ValueError if not a camera URL
+    zone_pts = parse_zone(zone)
+    running = [s for s in live_streams.values() if s.job["status"] not in ("stopped", "error")]
+    if len(running) >= config.MAX_STREAMS:
+        raise RuntimeError(f"Maximum of {config.MAX_STREAMS} live streams already running - stop one first.")
+    sid = uuid.uuid4().hex[:8]
+    label = name or f"LIVE {mask_source(source)}"
+    job = {"id": sid, "kind": "stream", "filename": label, "source": mask_source(source),
+           "status": "connecting", "progress": 0.0, "breaches": 0, "breaches_classified": 0,
+           "alerts_created": 0, "pending_vlm": 0, "skipped": 0, "frames_processed": 0, "fps": 0.0,
+           "errors": [], "analyses": [], "zone": zone_pts, "started_at": time.time()}
+    jobs[sid] = job
+    stream = LiveStream(job, source, zone_pts, _live_breach)
+    live_streams[sid] = stream
+    stream.start()
+    return job
+
+
+@app.post("/streams")
+async def add_stream(req: StreamRequest):
+    """Start continuous analysis of a live camera feed."""
+    try:
+        job = start_stream(req.url, req.name, req.zone)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return {"stream_id": job["id"], "status": job["status"], "source": job["source"]}
+
+
+@app.get("/streams")
+async def list_streams():
+    return [{k: v for k, v in s.job.items() if k != "zone"} for s in live_streams.values()]
+
+
+@app.delete("/streams/{stream_id}")
+async def stop_stream(stream_id: str):
+    s = live_streams.get(stream_id)
+    if not s:
+        raise HTTPException(404, "No such stream")
+    s.stop()
+    return {"stream_id": stream_id, "status": "stopping"}
+
+
 @app.get("/alerts")
 async def list_alerts(severity: int | None = None, min_severity: int | None = None, event_type: str | None = None):
     return store.list(severity=severity, min_severity=min_severity, event_type=event_type)
@@ -186,7 +264,8 @@ async def clear_alerts():
 @app.get("/status")
 async def status():
     active = [j for j in jobs.values() if j["status"] in ("queued", "processing")]
-    return {"active_jobs": len(active), "total_alerts": len(store.alerts),
+    live = [j for j in jobs.values() if j.get("kind") == "stream" and j["status"] in ("connecting", "live", "reconnecting")]
+    return {"active_jobs": len(active), "active_streams": len(live), "total_alerts": len(store.alerts),
             "jobs": sorted(({k: v for k, v in j.items() if k not in ("path", "zone")} for j in jobs.values()),
                            key=lambda j: j["started_at"], reverse=True)[:10]}
 

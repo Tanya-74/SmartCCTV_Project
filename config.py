@@ -31,6 +31,12 @@ POST_TRIGGER_SECONDS = 2     # extra footage kept AFTER the trigger
 REANALYSE_SECONDS = 15       # someone still in the zone is re-checked this often
 BREACH_COOLDOWN_SEC = 10    # min gap between two triggers for the same video
 
+# --- Live streams ---
+LIVE_FPS = 10               # frames per second analysed from a live feed
+MAX_STREAMS = 2             # simultaneous live cameras (each loads its own YOLO model)
+MAX_PENDING_VLM = 4         # if Gemini is this far behind, new breaches are skipped
+RTSP_URL = os.getenv("RTSP_URL", "")   # optional: auto-start this stream on server startup
+
 # --- VLM ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
