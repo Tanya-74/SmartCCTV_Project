@@ -1,0 +1,12 @@
+﻿fastapi
+uvicorn[standard]
+python-multipart
+ultralytics
+opencv-python
+numpy
+python-dotenv
+google-genai
+pydantic
+kaggle
+lap
+jinja2

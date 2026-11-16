@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart CCTV Dashboard</title>
+<style>
+  :root{--bg:#0f1419;--panel:#1a212b;--text:#e6edf3;--muted:#8b98a5;--line:#2a3441;
+        --s1:#3b82f6;--s2:#22c55e;--s3:#eab308;--s4:#f97316;--s5:#ef4444}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,Segoe UI,sans-serif}
+  header{padding:16px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+  header h1{font-size:18px;margin:0}
+  .dot{width:10px;height:10px;border-radius:50%;background:#666}
+  .dot.live{background:var(--s2);box-shadow:0 0 8px var(--s2)}
+  main{max-width:1100px;margin:0 auto;padding:20px 24px;display:grid;gap:20px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+  h2{font-size:14px;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  button,select,input[type=file]{background:#0f1419;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit}
+  button{cursor:pointer;background:#2563eb;border-color:#2563eb}
+  button:disabled{opacity:.5;cursor:default}
+  button.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .job{padding:8px 0;border-top:1px solid var(--line);display:grid;gap:4px}
+  .job:first-of-type{border-top:0}
+  .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:#2563eb;transition:width .3s}
+  .muted{color:var(--muted);font-size:13px}
+  #feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .card{background:var(--bg);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:8px;overflow:hidden}
+  .card img{width:100%;display:block;background:#000;aspect-ratio:4/3;object-fit:cover}
+  .card .body{padding:10px 12px;display:grid;gap:6px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--c);color:#111;font-weight:700;font-size:12px}
+  .card.new{animation:flash 1.6s}
+  @keyframes flash{from{box-shadow:0 0 0 3px var(--c)}to{box-shadow:none}}
+  .sev1{--c:var(--s1)}.sev2{--c:var(--s2)}.sev3{--c:var(--s3)}.sev4{--c:var(--s4)}.sev5{--c:var(--s5)}
+  .legend span{margin-right:12px;font-size:13px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;background:var(--c)}
+</style>
+</head>
+<body>
+<header><span class="dot" id="dot"></span><h1>Smart CCTV &mdash; Perimeter Intrusion &amp; Crime Detection</h1>
+  <span class="muted" id="conn">connecting...</span></header>
+<main>
+  <section class="panel">
+    <h2>Analyse a video</h2>
+    <form id="up" class="row">
+      <input type="file" id="file" accept="video/*" required>
+      <select id="zone" title="Restricted zone"><option value="default">Restricted zone: default</option><option value="full">Restricted zone: whole frame</option></select>
+      <button id="btn">Upload &amp; analyse</button>
+      <span class="muted" id="upmsg"></span>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Processing status</h2>
+    <div id="jobs" class="muted">No videos yet.</div>
+  </section>
+
+  <section class="panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <h2 style="margin:0">Live alerts <span id="count" class="muted"></span></h2>
+      <div class="row">
+        <select id="fsev"><option value="">All severities</option><option value="3">Severity 3+</option>
+          <option value="4">Severity 4+</option><option value="5">Severity 5</option></select>
+        <select id="ftype"><option value="">All types</option><option>intrusion</option><option>theft</option>
+          <option>assault</option><option>robbery</option><option>vandalism</option><option>other</option></select>
+        <button class="ghost" id="clear">Clear all</button>
+      </div>
+    </div>
+    <div class="legend muted" style="margin-bottom:12px">
+      <span class="sev3"><i></i>3 serious</span><span class="sev4"><i></i>4 dangerous</span><span class="sev5"><i></i>5 critical</span>
+    </div>
+    <div id="feed"></div>
+    <div id="empty" class="muted">No alerts yet &mdash; upload a video to begin.</div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let alerts = [];   // newest first
+const seen = new Set();
+
+function card(a, isNew){
+  const el = document.createElement('div');
+  el.className = `card sev${a.severity}` + (isNew ? ' new' : '');
+  el.dataset.id = a.id;
+  el.innerHTML = `<img src="${a.snapshot}" alt="snapshot" loading="lazy">
+    <div class="body">
+      <div class="row" style="justify-content:space-between">
+        <span class="badge">${a.event_type.toUpperCase()}</span><b>Severity ${a.severity}/5</b></div>
+      <div>${escapeHtml(a.description)}</div>
+      <div class="muted">${escapeHtml(a.source_video)} @ ${a.video_time_sec}s &middot; conf ${(a.confidence*100).toFixed(0)}%<br>${a.timestamp.replace('T',' ')}</div>
+    </div>`;
+  return el;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function passes(a){
+  const s = $('fsev').value, t = $('ftype').value;
+  return (!s || a.severity >= +s) && (!t || a.event_type === t);
+}
+function render(){
+  const feed = $('feed'); feed.innerHTML = '';
+  const shown = alerts.filter(passes);
+  shown.forEach(a => feed.appendChild(card(a,false)));
+  $('empty').style.display = shown.length ? 'none' : 'block';
+  $('count').textContent = `(${shown.length} of ${alerts.length})`;
+}
+function addAlert(a){
+  if (seen.has(a.id)) return;
+  seen.add(a.id); alerts.unshift(a);
+  if (passes(a)) { $('feed').prepend(card(a,true)); }
+  $('empty').style.display = alerts.filter(passes).length ? 'none':'block';
+  $('count').textContent = `(${alerts.filter(passes).length} of ${alerts.length})`;
+}
+
+async function loadAlerts(){
+  const list = await (await fetch('/alerts')).json();
+  alerts = list; list.forEach(a => seen.add(a.id)); render();
+}
+
+// ---- live feed: WebSocket, with polling fallback ----
+let ws, pollTimer;
+function setLive(on, txt){ $('dot').className = 'dot' + (on?' live':''); $('conn').textContent = txt; }
+function connect(){
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(`${proto}://${location.host}/ws/alerts`);
+  ws.onopen = () => { setLive(true,'live (websocket)'); clearInterval(pollTimer);
+                      setInterval(()=>ws.readyState===1&&ws.send('ping'),20000); };
+  ws.onmessage = e => addAlert(JSON.parse(e.data));
+  ws.onclose = () => { setLive(false,'polling...'); startPolling(); setTimeout(connect,5000); };
+}
+function startPolling(){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async()=>{
+    const lastId = alerts.length ? alerts[0].id : '';
+    const r = await fetch('/alerts/poll' + (lastId ? `?after=${lastId}`:''));
+    (await r.json()).forEach(addAlert);
+  }, 3000);
+}
+
+// ---- status panel ----
+async function refreshStatus(){
+  try{
+    const s = await (await fetch('/status')).json();
+    if(!s.jobs.length){ $('jobs').textContent='No videos yet.'; return; }
+    $('jobs').innerHTML = s.jobs.map(j=>`<div class="job">
+      <div class="row" style="justify-content:space-between"><b>${escapeHtml(j.filename)}</b>
+        <span class="muted">${j.status}${j.pending_vlm?` &middot; waiting on AI for ${j.pending_vlm} clip(s)`:''}</span></div>
+      <div class="bar"><i style="width:${j.progress}%"></i></div>
+      <div class="muted">${j.progress}% &middot; ${j.breaches} zone breach(es) &middot; ${j.breaches_classified} analysed &middot; ${j.alerts_created} alert(s)
+        ${j.errors.length?` &middot; <span style="color:var(--s5)">${escapeHtml(j.errors[0])}</span>`:''}</div></div>`).join('');
+  }catch(e){}
+}
+
+$('up').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const f = $('file').files[0]; if(!f) return;
+  const fd = new FormData(); fd.append('file', f); fd.append('zone', $('zone').value);
+  $('btn').disabled = true; $('upmsg').textContent = 'Uploading...';
+  try{
+    const r = await fetch('/upload',{method:'POST',body:fd});
+    if(!r.ok) throw new Error((await r.json()).detail || r.statusText);
+    $('upmsg').textContent = 'Queued - analysing now.';
+  }catch(err){ $('upmsg').textContent = 'Failed: ' + err.message; }
+  $('btn').disabled = false; refreshStatus();
+});
+$('fsev').onchange = $('ftype').onchange = render;
+$('clear').onclick = async()=>{ if(confirm('Delete all alerts?')){ await fetch('/alerts',{method:'DELETE'}); alerts=[]; seen.clear(); render(); } };
+
+loadAlerts(); connect(); refreshStatus(); setInterval(refreshStatus, 2000);
+</script>
+</body>
+</html>
