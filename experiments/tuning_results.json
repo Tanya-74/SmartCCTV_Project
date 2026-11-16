@@ -1,0 +1,473 @@
+{
+ "zone": "full",
+ "penalty": 0.05,
+ "defaults": {
+  "alert_min_severity": 3,
+  "yolo_conf": 0.35,
+  "min_frames_in_zone": 3,
+  "min_gemini_confidence": 0.0
+ },
+ "tuned_cd": {
+  "alert_min_severity": 1,
+  "yolo_conf": 0.35,
+  "min_frames_in_zone": 3,
+  "min_gemini_confidence": 0.0
+ },
+ "grid_best": {
+  "alert_min_severity": 1,
+  "yolo_conf": 0.15,
+  "min_frames_in_zone": 1,
+  "min_gemini_confidence": 0.0
+ },
+ "before": {
+  "alerts": {
+   "Arson001_x264": 2,
+   "Assault001_x264": 6,
+   "Burglary001_x264": 6,
+   "Fighting002_x264": 0,
+   "Normal_Videos_003_x264": 0,
+   "shanghaitech_01_0014": 0
+  },
+  "TP": 3,
+  "FP": 0,
+  "FN": 1,
+  "TN": 2,
+  "F1": 0.8571428571428571,
+  "false_alarm_alerts": 0,
+  "J": 0.8571428571428571
+ },
+ "after_cd": {
+  "alerts": {
+   "Arson001_x264": 7,
+   "Assault001_x264": 8,
+   "Burglary001_x264": 6,
+   "Fighting002_x264": 2,
+   "Normal_Videos_003_x264": 0,
+   "shanghaitech_01_0014": 0
+  },
+  "TP": 4,
+  "FP": 0,
+  "FN": 0,
+  "TN": 2,
+  "F1": 1.0,
+  "false_alarm_alerts": 0,
+  "J": 1.0
+ },
+ "after_grid": {
+  "alerts": {
+   "Arson001_x264": 4,
+   "Assault001_x264": 8,
+   "Burglary001_x264": 7,
+   "Fighting002_x264": 4,
+   "Normal_Videos_003_x264": 0,
+   "shanghaitech_01_0014": 0
+  },
+  "TP": 4,
+  "FP": 0,
+  "FN": 0,
+  "TN": 2,
+  "F1": 1.0,
+  "false_alarm_alerts": 0,
+  "J": 1.0
+ },
+ "cd": {
+  "evaluations": 65,
+  "cycles": 2,
+  "converged": true,
+  "seconds": 0.13300800323486328
+ },
+ "grid": {
+  "evaluations": 3520,
+  "ties_at_best": 922,
+  "seconds": 0.6006255149841309
+ },
+ "trace": [
+  {
+   "step": 0,
+   "cycle": 0,
+   "param": "start",
+   "old": null,
+   "new": null,
+   "J": 0.8571428571428571,
+   "changed": false
+  },
+  {
+   "step": 1,
+   "cycle": 1,
+   "param": "alert_min_severity",
+   "old": 3,
+   "new": 1,
+   "J": 1.0,
+   "changed": true
+  },
+  {
+   "step": 2,
+   "cycle": 1,
+   "param": "yolo_conf",
+   "old": 0.35,
+   "new": 0.35,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 3,
+   "cycle": 1,
+   "param": "min_frames_in_zone",
+   "old": 3,
+   "new": 3,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 4,
+   "cycle": 1,
+   "param": "min_gemini_confidence",
+   "old": 0.0,
+   "new": 0.0,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 5,
+   "cycle": 2,
+   "param": "alert_min_severity",
+   "old": 1,
+   "new": 1,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 6,
+   "cycle": 2,
+   "param": "yolo_conf",
+   "old": 0.35,
+   "new": 0.35,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 7,
+   "cycle": 2,
+   "param": "min_frames_in_zone",
+   "old": 3,
+   "new": 3,
+   "J": 1.0,
+   "changed": false
+  },
+  {
+   "step": 8,
+   "cycle": 2,
+   "param": "min_gemini_confidence",
+   "old": 0.0,
+   "new": 0.0,
+   "J": 1.0,
+   "changed": false
+  }
+ ],
+ "line_searches": [
+  {
+   "cycle": 1,
+   "param": "alert_min_severity",
+   "tried": [
+    [
+     1,
+     1.0
+    ],
+    [
+     2,
+     1.0
+    ],
+    [
+     3,
+     0.8571428571428571
+    ],
+    [
+     4,
+     0.8571428571428571
+    ],
+    [
+     5,
+     0.6666666666666666
+    ]
+   ]
+  },
+  {
+   "cycle": 1,
+   "param": "yolo_conf",
+   "tried": [
+    [
+     0.15,
+     1.0
+    ],
+    [
+     0.2,
+     1.0
+    ],
+    [
+     0.25,
+     1.0
+    ],
+    [
+     0.3,
+     1.0
+    ],
+    [
+     0.35,
+     1.0
+    ],
+    [
+     0.4,
+     1.0
+    ],
+    [
+     0.45,
+     1.0
+    ],
+    [
+     0.5,
+     1.0
+    ],
+    [
+     0.55,
+     1.0
+    ],
+    [
+     0.6,
+     1.0
+    ],
+    [
+     0.65,
+     1.0
+    ]
+   ]
+  },
+  {
+   "cycle": 1,
+   "param": "min_frames_in_zone",
+   "tried": [
+    [
+     1,
+     1.0
+    ],
+    [
+     2,
+     1.0
+    ],
+    [
+     3,
+     1.0
+    ],
+    [
+     5,
+     1.0
+    ],
+    [
+     8,
+     1.0
+    ],
+    [
+     12,
+     1.0
+    ],
+    [
+     20,
+     0.8571428571428571
+    ],
+    [
+     30,
+     0.8571428571428571
+    ]
+   ]
+  },
+  {
+   "cycle": 1,
+   "param": "min_gemini_confidence",
+   "tried": [
+    [
+     0.0,
+     1.0
+    ],
+    [
+     0.5,
+     1.0
+    ],
+    [
+     0.6,
+     1.0
+    ],
+    [
+     0.7,
+     1.0
+    ],
+    [
+     0.8,
+     1.0
+    ],
+    [
+     0.85,
+     1.0
+    ],
+    [
+     0.9,
+     1.0
+    ],
+    [
+     0.95,
+     1.0
+    ]
+   ]
+  },
+  {
+   "cycle": 2,
+   "param": "alert_min_severity",
+   "tried": [
+    [
+     1,
+     1.0
+    ],
+    [
+     2,
+     1.0
+    ],
+    [
+     3,
+     0.8571428571428571
+    ],
+    [
+     4,
+     0.8571428571428571
+    ],
+    [
+     5,
+     0.6666666666666666
+    ]
+   ]
+  },
+  {
+   "cycle": 2,
+   "param": "yolo_conf",
+   "tried": [
+    [
+     0.15,
+     1.0
+    ],
+    [
+     0.2,
+     1.0
+    ],
+    [
+     0.25,
+     1.0
+    ],
+    [
+     0.3,
+     1.0
+    ],
+    [
+     0.35,
+     1.0
+    ],
+    [
+     0.4,
+     1.0
+    ],
+    [
+     0.45,
+     1.0
+    ],
+    [
+     0.5,
+     1.0
+    ],
+    [
+     0.55,
+     1.0
+    ],
+    [
+     0.6,
+     1.0
+    ],
+    [
+     0.65,
+     1.0
+    ]
+   ]
+  },
+  {
+   "cycle": 2,
+   "param": "min_frames_in_zone",
+   "tried": [
+    [
+     1,
+     1.0
+    ],
+    [
+     2,
+     1.0
+    ],
+    [
+     3,
+     1.0
+    ],
+    [
+     5,
+     1.0
+    ],
+    [
+     8,
+     1.0
+    ],
+    [
+     12,
+     1.0
+    ],
+    [
+     20,
+     0.8571428571428571
+    ],
+    [
+     30,
+     0.8571428571428571
+    ]
+   ]
+  },
+  {
+   "cycle": 2,
+   "param": "min_gemini_confidence",
+   "tried": [
+    [
+     0.0,
+     1.0
+    ],
+    [
+     0.5,
+     1.0
+    ],
+    [
+     0.6,
+     1.0
+    ],
+    [
+     0.7,
+     1.0
+    ],
+    [
+     0.8,
+     1.0
+    ],
+    [
+     0.85,
+     1.0
+    ],
+    [
+     0.9,
+     1.0
+    ],
+    [
+     0.95,
+     1.0
+    ]
+   ]
+  }
+ ]
+}

@@ -12,3 +12,4 @@ lap
 jinja2
 imageio-ffmpeg
 playwright
+matplotlib

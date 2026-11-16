@@ -28,38 +28,29 @@ class Breach:
     annotated_frame: object = field(default=None, repr=False)  # snapshot at trigger moment
 
 
-class ZoneMonitor:
-    def __init__(self, detector: Detector, zone: Zone, fps: float,
-                 buffer_seconds: float = config.BUFFER_SECONDS,
-                 cooldown_sec: float = config.BREACH_COOLDOWN_SEC,
-                 min_frames_in_zone: int = 3,
-                 post_seconds: float = config.POST_TRIGGER_SECONDS):
-        self.det, self.zone, self.fps = detector, zone, fps or 30.0
-        self.buffer = deque(maxlen=max(1, int(self.fps * buffer_seconds)))
-        self.cooldown_frames = int(self.fps * cooldown_sec)
-        self.min_frames = min_frames_in_zone
-        self.post_frames = int(self.fps * post_seconds)
-        self.pending: Breach | None = None   # breach waiting for its post-trigger frames
-        self.pending_left = 0
+class ZoneTrigger:
+    """The DECISION rule only: 'should a zone breach fire on this frame?'
+
+    It looks at detections, never at pixels, so it can be replayed on saved
+    detections (the tuning experiment does exactly that, without running YOLO).
+
+    A breach fires when a tracked object has been inside the zone for at least
+    `min_frames` frames in a row, it was not flagged in the last REANALYSE_SECONDS,
+    and the last breach (any object) was at least `cooldown_sec` ago.
+    """
+
+    def __init__(self, fps: float, min_frames: int = 3, cooldown_sec: float = config.BREACH_COOLDOWN_SEC):
+        self.min_frames = min_frames
+        self.cooldown_frames = int(fps * cooldown_sec)
+        self.reflag_frames = int(fps * config.REANALYSE_SECONDS)
         self.in_zone_count: dict[int, int] = {}   # track id -> consecutive frames inside
         self.flagged_at: dict[int, int] = {}      # id -> frame index when it last caused a breach
-        self.reflag_frames = int(self.fps * config.REANALYSE_SECONDS)
         self.last_trigger = -10**9
-        self.idx = 0
-        self.det.reset_tracker()
+        self.idx = 0                               # index of the frame being processed
 
-    def flush(self):
-        """Call at end of video: emit a breach still waiting for post-trigger frames."""
-        b, self.pending = self.pending, None
-        return b
-
-    def process(self, frame):
-        """Returns (detections, Breach|None) for this frame."""
-        dets = self.det.track(frame, self.zone)
-        self.buffer.append(frame.copy())
-
-        visible = set()
-        newly = []
+    def update(self, dets: list, blocked: bool = False):
+        """Feed one frame's detections. Returns the list of detections that caused a breach, or None."""
+        visible, newly = set(), []
         for d in dets:
             if d.track_id is None:
                 continue
@@ -77,6 +68,40 @@ class ZoneMonitor:
             if tid not in visible:
                 self.in_zone_count.pop(tid)
 
+        fired = None
+        if newly and not blocked and (self.idx - self.last_trigger) >= self.cooldown_frames:
+            self.last_trigger = self.idx
+            self.flagged_at.update({d.track_id: self.idx for d in newly})
+            fired = newly
+        self.idx += 1
+        return fired
+
+
+class ZoneMonitor:
+    def __init__(self, detector: Detector, zone: Zone, fps: float,
+                 buffer_seconds: float = config.BUFFER_SECONDS,
+                 cooldown_sec: float = config.BREACH_COOLDOWN_SEC,
+                 min_frames_in_zone: int = 3,
+                 post_seconds: float = config.POST_TRIGGER_SECONDS):
+        self.det, self.zone, self.fps = detector, zone, fps or 30.0
+        self.buffer = deque(maxlen=max(1, int(self.fps * buffer_seconds)))
+        self.trigger = ZoneTrigger(self.fps, min_frames_in_zone, cooldown_sec)
+        self.post_frames = int(self.fps * post_seconds)
+        self.pending: Breach | None = None   # breach waiting for its post-trigger frames
+        self.pending_left = 0
+        self.det.reset_tracker()
+
+    def flush(self):
+        """Call at end of video: emit a breach still waiting for post-trigger frames."""
+        b, self.pending = self.pending, None
+        return b
+
+    def process(self, frame):
+        """Returns (detections, Breach|None) for this frame."""
+        dets = self.det.track(frame, self.zone)
+        self.buffer.append(frame.copy())
+        idx = self.trigger.idx
+
         # A breach is created at the trigger moment, then keeps collecting
         # `post_frames` more frames so the clip shows what happens AFTER entry too.
         breach = None
@@ -85,12 +110,11 @@ class ZoneMonitor:
             self.pending_left -= 1
             if self.pending_left <= 0:
                 breach, self.pending = self.pending, None
-        if newly and self.pending is None and breach is None and (self.idx - self.last_trigger) >= self.cooldown_frames:
-            self.last_trigger = self.idx
-            self.flagged_at.update({d.track_id: self.idx for d in newly})
+        newly = self.trigger.update(dets, blocked=(self.pending is not None or breach is not None))
+        if newly:
             self.pending = Breach(
-                frame_index=self.idx,
-                timestamp_sec=self.idx / self.fps,
+                frame_index=idx,
+                timestamp_sec=idx / self.fps,
                 track_ids=[d.track_id for d in newly],
                 labels=[d.label for d in newly],
                 frames=list(self.buffer),
@@ -99,7 +123,6 @@ class ZoneMonitor:
             self.pending_left = self.post_frames
             if self.pending_left <= 0:
                 breach, self.pending = self.pending, None
-        self.idx += 1
         return dets, breach
 
 

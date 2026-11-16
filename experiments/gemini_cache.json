@@ -1,0 +1,818 @@
+{
+ "Arson001_x264|1080|car": {
+  "confidence": 0.9,
+  "description": "A person exits a white minivan parked in a lot and walks towards the building. This appears to be routine activity.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1080|car, person": {
+  "confidence": 0.95,
+  "description": "A person exits a white minivan parked in a parking lot and walks toward the building. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1080|car, person, truck": {
+  "confidence": 0.95,
+  "description": "A person is seen exiting a white minivan parked in a lot and walking towards the building. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1080|person": {
+  "confidence": 0.9,
+  "description": "A person exits a white minivan parked in a parking lot and walks towards a building.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1170|car": {
+  "confidence": 0.85,
+  "description": "A person is walking near a building entrance while a white van is parked in the lot with its side door open. The individual appears to be approaching the building.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1170|car, truck": {
+  "confidence": 0.85,
+  "description": "A person is walking near a vehicle parked in a restricted area. The individual appears to be holding an object while moving towards the building.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1170|person": {
+  "confidence": 0.85,
+  "description": "A person is walking near the side of a building where a white van is parked with its doors open. The individual appears to be approaching the building entrance.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1260|person": {
+  "confidence": 0.9,
+  "description": "A person is seen walking near a parked vehicle in a parking lot during the day. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1350|bus": {
+  "confidence": 0.9,
+  "description": "A person exits a white minivan parked under a carport and walks away from the vehicle. The activity appears to be routine parking and exiting of a vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1350|car": {
+  "confidence": 0.95,
+  "description": "A person is seen exiting a white minivan parked under a carport and walking away from the vehicle. No suspicious or illegal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1350|person": {
+  "confidence": 0.9,
+  "description": "A person is seen walking towards a white minivan parked under a carport and entering the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1350|truck": {
+  "confidence": 0.95,
+  "description": "A person is seen exiting a white minivan parked under a carport and walking away from the vehicle. No suspicious or illegal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1440|truck": {
+  "confidence": 0.95,
+  "description": "A person is seen exiting a white minivan parked in a driveway and walking towards the building. No suspicious or illegal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1530|car": {
+  "confidence": 0.85,
+  "description": "A person exits a white minivan parked in a restricted area and approaches the building entrance.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1530|person": {
+  "confidence": 0.85,
+  "description": "A person exits a vehicle parked in a restricted area and approaches the building entrance.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1530|truck": {
+  "confidence": 0.85,
+  "description": "A person exits a white van parked in a restricted area and approaches the building entrance.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1620|car": {
+  "confidence": 0.95,
+  "description": "An individual exits a white van, approaches a building structure, and appears to ignite a fire on the exterior wall before returning to the vehicle.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Arson001_x264|1620|car, person": {
+  "confidence": 0.95,
+  "description": "A person exits a white van and appears to be using a lighter to ignite something near the building structure.",
+  "event_type": "vandalism",
+  "severity": 3
+ },
+ "Arson001_x264|1620|person": {
+  "confidence": 0.9,
+  "description": "A person exits a white van parked in a restricted area and walks toward the building entrance.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|1710|car": {
+  "confidence": 0.9,
+  "description": "A person is seen exiting a white minivan parked in a lot. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1800|car": {
+  "confidence": 0.9,
+  "description": "A person is seen exiting a white van parked in a parking lot. No suspicious or illegal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|1890|car": {
+  "confidence": 1.0,
+  "description": "An individual exits a white vehicle and intentionally ignites a fire on the ground near the building entrance.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|1890|person": {
+  "confidence": 1.0,
+  "description": "A person exits a white van and throws a flaming object onto the ground near a building, causing a fire.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|1980|car": {
+  "confidence": 1.0,
+  "description": "An individual in a red shirt exits a vehicle and intentionally sets fire to the side of a building before fleeing the scene.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|1980|car, person": {
+  "confidence": 1.0,
+  "description": "An individual in a red shirt approaches the building, sets a fire on the porch, and immediately flees the scene.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|1980|person": {
+  "confidence": 0.95,
+  "description": "An individual in a red shirt is seen fleeing the scene after setting a fire on the premises.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|2070|car": {
+  "confidence": 1.0,
+  "description": "An individual is seen setting fire to the side of a building and then fleeing the scene.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|2070|car, person": {
+  "confidence": 1.0,
+  "description": "A person in a red shirt is seen setting fire to the side of a building before running away from the scene.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Arson001_x264|2160|car": {
+  "confidence": 0.9,
+  "description": "A person is seen walking across the parking lot and moving towards the side of the building. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2250|car": {
+  "confidence": 0.95,
+  "description": "A person in a red shirt runs into the parking lot and throws an object, which appears to be a lit firework or incendiary device, onto the pavement.",
+  "event_type": "vandalism",
+  "severity": 3
+ },
+ "Arson001_x264|2250|car, person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt runs into the frame and throws an object toward the building before running away.",
+  "event_type": "vandalism",
+  "severity": 3
+ },
+ "Arson001_x264|2340|car, person": {
+  "confidence": 0.95,
+  "description": "A person in a red shirt is walking across the parking lot. No suspicious activity or unauthorized access is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2340|person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen walking across an empty parking lot during the day.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2430|person": {
+  "confidence": 0.85,
+  "description": "A person wearing a red shirt is seen running across a parking lot in a restricted area.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|2520|car": {
+  "confidence": 0.85,
+  "description": "A person in a red shirt is seen walking across a parking lot and approaching a white van parked under a structure. The activity appears to be routine movement.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2520|person": {
+  "confidence": 0.85,
+  "description": "A person in a red shirt is seen walking across a parking lot and approaching a building, which appears to be a restricted area.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|2610|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt walks across a parking lot and approaches a white minivan parked under a shelter. The activity appears to be routine.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2610|car, person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is walking through a parking lot near a white van. The activity appears to be ordinary movement.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2610|car, person, truck": {
+  "confidence": 0.95,
+  "description": "A person in a red shirt is walking through a parking lot near a white van. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2610|person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is walking through a parking lot near a white van. There is no indication of unauthorized access or criminal activity.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2700|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt walks toward a white van parked in a lot and enters the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2700|car, person, truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt walks toward a white minivan parked in a lot and enters the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2700|car, truck": {
+  "confidence": 0.95,
+  "description": "A person in a red shirt walks toward a white minivan parked in a lot and enters the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2700|truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt walks up to a white minivan parked in a lot and enters the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2790|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen entering a white minivan parked under a carport. The activity appears to be a routine arrival or departure.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2790|car, person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen entering a white minivan parked in a driveway. The activity appears to be a routine entry into a vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2790|car, person, truck": {
+  "confidence": 0.95,
+  "description": "A person in a red shirt is seen entering a white minivan parked in a driveway. This appears to be routine activity.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2880|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen exiting a white minivan parked under a carport. The individual then walks away from the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2880|car, truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt exits a white minivan parked in a driveway and walks away from the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2880|person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt exits a white minivan parked under a carport and walks away from the vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2880|truck": {
+  "confidence": 0.9,
+  "description": "An individual in a red shirt is seen exiting a white minivan parked under a carport. No suspicious or illegal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2970|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt exits a white minivan parked under a carport and walks toward the building entrance.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|2970|person": {
+  "confidence": 0.85,
+  "description": "A person in a red shirt exits a white van and approaches the building entrance in a restricted area.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|3060|car": {
+  "confidence": 0.95,
+  "description": "An individual exits a vehicle and appears to intentionally set fire to the side of a building.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Arson001_x264|3060|car, truck": {
+  "confidence": 0.95,
+  "description": "An individual exits a vehicle and appears to intentionally set fire to the side of a building.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Arson001_x264|3060|truck": {
+  "confidence": 0.95,
+  "description": "An individual exits a vehicle and appears to intentionally set fire to the side of a building.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Arson001_x264|3150|car": {
+  "confidence": 0.95,
+  "description": "A person is seen walking from a parked vehicle towards the building entrance. This appears to be a routine arrival.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3150|car, person, truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt walks from the side of a building and enters a white minivan parked under a carport.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3150|car, truck": {
+  "confidence": 0.9,
+  "description": "A person is seen walking from a parked vehicle towards a building entrance. The activity appears to be a routine arrival.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3150|person": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen walking from the side of a building and getting into a white minivan parked in a lot. The activity appears to be routine entry into a vehicle.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3150|person, truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt is seen walking from the side of a building and entering a white minivan parked in a lot.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3240|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt exits a white minivan and walks away from the vehicle in a parking lot.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3240|truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt exits a white minivan and walks towards the building. This appears to be a routine arrival.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3330|car": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt enters a white minivan parked in a lot and then drives away.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3330|car, truck": {
+  "confidence": 0.9,
+  "description": "A person in a red shirt enters a white minivan parked in a parking lot and then drives away.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3420|car": {
+  "confidence": 0.95,
+  "description": "A white minivan is seen driving through a parking lot and exiting the frame. No suspicious or unauthorized activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3510|bus, truck": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3510|car": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3600|bus": {
+  "confidence": 0.85,
+  "description": "A white minivan is parked in a restricted area with its side door open. No individuals are visible in the immediate vicinity of the vehicle.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|3600|bus, truck": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized access is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|3600|truck": {
+  "confidence": 0.85,
+  "description": "A white minivan is parked in a restricted parking area with its side door open. No individuals are visible in the immediate vicinity of the vehicle.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Arson001_x264|3690|bus": {
+  "confidence": 0.85,
+  "description": "A white minivan is parked in a restricted area with its side door open. The footage is being used by law enforcement to request information.",
+  "event_type": "other",
+  "severity": 2
+ },
+ "Arson001_x264|3690|bus, truck": {
+  "confidence": 0.85,
+  "description": "A white minivan is parked with its side door open in what appears to be a restricted or private area. The footage is part of a police request for information regarding the vehicle.",
+  "event_type": "other",
+  "severity": 2
+ },
+ "Arson001_x264|450|car": {
+  "confidence": 0.8,
+  "description": "A white minivan is parked in a parking lot during the day. The scene appears to be part of a police investigation regarding a reported crime.",
+  "event_type": "other",
+  "severity": 2
+ },
+ "Arson001_x264|720|bus": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|720|car": {
+  "confidence": 0.95,
+  "description": "A white minivan is parked in a parking space with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|810|bus": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|810|car": {
+  "confidence": 0.9,
+  "description": "A white van is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|810|truck": {
+  "confidence": 0.9,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|900|car": {
+  "confidence": 0.95,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Arson001_x264|900|truck": {
+  "confidence": 0.95,
+  "description": "A white minivan is parked in a parking lot with its side door open. No suspicious activity or unauthorized individuals are visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Assault001_x264|1080|person": {
+  "confidence": 0.95,
+  "description": "A person is lying on the ground while others are present in the immediate vicinity, indicating a physical altercation has occurred.",
+  "event_type": "assault",
+  "severity": 5
+ },
+ "Assault001_x264|1170|person": {
+  "confidence": 0.95,
+  "description": "A person is lying on the ground while another individual stands over them, appearing to have just engaged in a physical altercation. The scene shows signs of a violent confrontation in a public area.",
+  "event_type": "assault",
+  "severity": 5
+ },
+ "Assault001_x264|1350|person": {
+  "confidence": 0.85,
+  "description": "Several individuals are walking through a restricted outdoor area at night. No signs of violence or property damage are visible.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Assault001_x264|1440|person": {
+  "confidence": 0.95,
+  "description": "Several individuals are walking across a paved area at night. No suspicious or prohibited activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Assault001_x264|1620|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals is seen physically attacking a person who is lying on the ground in a public area.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|1710|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals approaches a person who is then knocked to the ground. The group continues to interact with the person on the ground before walking away.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|180|person": {
+  "confidence": 1.0,
+  "description": "A person is physically attacked and knocked to the ground by another individual in an outdoor area.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|1890|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals are involved in a physical altercation on the sidewalk, with one person appearing to strike another.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|1980|person": {
+  "confidence": 0.95,
+  "description": "A person is physically attacked and struck by another individual in an outdoor area. The victim is seen falling to the ground during the altercation.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|2070|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals is seen physically confronting and attacking a person in a public area.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|2250|car, person": {
+  "confidence": 0.9,
+  "description": "The footage shows individuals walking in an outdoor area at night. No suspicious or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Assault001_x264|2250|person": {
+  "confidence": 0.85,
+  "description": "A person is seen walking through a restricted area, appearing to be unauthorized. The footage shows the individual moving through the space over several frames.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Assault001_x264|2340|car, person": {
+  "confidence": 0.85,
+  "description": "The footage shows individuals walking in an outdoor area, which appears to be ordinary activity.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Assault001_x264|450|person": {
+  "confidence": 1.0,
+  "description": "A person is physically attacking another individual who is on the ground. The aggressor is seen striking the victim multiple times.",
+  "event_type": "assault",
+  "severity": 5
+ },
+ "Assault001_x264|540|person": {
+  "confidence": 1.0,
+  "description": "A person is physically attacking another individual who is on the ground. The attacker is seen kicking and striking the victim multiple times.",
+  "event_type": "assault",
+  "severity": 5
+ },
+ "Assault001_x264|720|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals are physically attacking a person who is kneeling on the ground. The victim is being struck and kicked by multiple assailants.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|810|person": {
+  "confidence": 0.95,
+  "description": "A group of individuals are surrounding and physically attacking a person who is kneeling on the ground. The attackers are seen striking the victim multiple times.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|90|person": {
+  "confidence": 0.95,
+  "description": "A person is seen running towards another individual and initiating a physical altercation in a public area.",
+  "event_type": "assault",
+  "severity": 4
+ },
+ "Assault001_x264|990|person": {
+  "confidence": 1.0,
+  "description": "A group of individuals are physically attacking a person, causing them to fall to the ground. The victim remains on the ground while the attackers walk away.",
+  "event_type": "assault",
+  "severity": 5
+ },
+ "Burglary001_x264|1080|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen removing an ATM or similar machine from a commercial area, causing significant damage to the surrounding structure.",
+  "event_type": "theft",
+  "severity": 4
+ },
+ "Burglary001_x264|1170|person": {
+  "confidence": 0.95,
+  "description": "A person is seen inside a commercial space where a large glass structure or display has been destroyed, with debris scattered on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1350|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen forcefully pulling a large glass door or display case, causing it to detach and fall over. The scene shows debris scattered on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1440|person": {
+  "confidence": 0.95,
+  "description": "A person is seen entering a building by smashing through the glass entrance doors with a vehicle. The glass is shattered and the door frame is heavily damaged.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1530|person": {
+  "confidence": 0.95,
+  "description": "A person is seen entering a building after a vehicle has crashed through the storefront, causing significant structural damage and debris.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1620|car": {
+  "confidence": 0.95,
+  "description": "A vehicle has crashed through the storefront, causing significant structural damage to the entrance and interior. A person in a hooded sweatshirt is seen entering the premises through the damaged area.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Burglary001_x264|1620|person": {
+  "confidence": 0.95,
+  "description": "A person in a hooded sweatshirt is seen entering a building after a vehicle has crashed through the front entrance, causing significant structural damage.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1710|person": {
+  "confidence": 0.95,
+  "description": "A person in a hooded sweatshirt enters a store through a shattered glass door or window. The interior of the store shows significant damage and debris on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|1980|car": {
+  "confidence": 0.95,
+  "description": "A vehicle has crashed through the storefront, causing significant structural damage and debris. An individual is seen exiting the vehicle and entering the damaged premises.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Burglary001_x264|1980|person": {
+  "confidence": 0.95,
+  "description": "A person is seen entering a building through a broken storefront window, with debris and damaged property visible on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|2070|car": {
+  "confidence": 0.95,
+  "description": "A vehicle has crashed into the storefront, causing significant structural damage and shattering the glass entrance. An individual is seen moving through the debris inside the damaged building.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|2070|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen forcefully damaging and dismantling a large glass display case or structure inside a building.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|2250|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen forcefully breaking into a store by destroying the glass entrance door. The scene shows significant damage to the storefront and debris scattered on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|2340|person": {
+  "confidence": 0.95,
+  "description": "A person is seen outside a building where a large glass door or window has been shattered and lies on the floor inside. The individual appears to be inspecting the damage or attempting to enter through the broken opening.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|2430|person": {
+  "confidence": 0.95,
+  "description": "A person is seen outside a store entrance where the glass door has been shattered and destroyed. The individual appears to be inspecting the damage or attempting to gain entry through the broken doorway.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|270|car": {
+  "confidence": 1.0,
+  "description": "A vehicle crashes through the front entrance of a building, causing significant structural damage.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Burglary001_x264|270|person": {
+  "confidence": 1.0,
+  "description": "A vehicle crashes through the storefront entrance, causing significant structural damage to the building.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Burglary001_x264|270|truck": {
+  "confidence": 1.0,
+  "description": "A vehicle crashes through the front entrance of a building, causing significant structural damage.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|360|car": {
+  "confidence": 1.0,
+  "description": "A vehicle crashes through the glass storefront of a building, causing significant structural damage.",
+  "event_type": "vandalism",
+  "severity": 5
+ },
+ "Burglary001_x264|720|person": {
+  "confidence": 0.9,
+  "description": "A person is seen walking through a scene where a large object has been knocked over and debris is scattered on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|810|person": {
+  "confidence": 0.95,
+  "description": "A person is seen walking through a shattered glass entrance into a building, with debris scattered on the floor.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Burglary001_x264|900|person": {
+  "confidence": 0.95,
+  "description": "A person wearing a mask and hooded jacket is seen standing at a counter, appearing to demand items or money from an employee. The scene shows signs of damage, suggesting a forced entry or violent confrontation.",
+  "event_type": "robbery",
+  "severity": 5
+ },
+ "Burglary001_x264|990|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen inside a damaged area, actively interacting with or dismantling a piece of equipment, likely an ATM, amidst debris.",
+  "event_type": "vandalism",
+  "severity": 4
+ },
+ "Fighting002_x264|0|person": {
+  "confidence": 0.9,
+  "description": "A person is standing at a bar counter interacting with a staff member. The activity appears to be a standard service interaction.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Fighting002_x264|1170|person": {
+  "confidence": 0.9,
+  "description": "A person is seen walking through a restricted area behind a bar counter. The area appears to be in disarray with items scattered on the floor.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|1530|person": {
+  "confidence": 0.95,
+  "description": "An individual is seen entering a restricted area behind a service counter. No signs of theft or violence are visible in the footage.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|270|person": {
+  "confidence": 0.95,
+  "description": "A person is seen walking behind the bar area, which is a restricted zone for customers.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|450|person": {
+  "confidence": 0.9,
+  "description": "An individual is seen entering the restricted area behind the bar counter. No theft or violence is observed in the footage.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|540|person": {
+  "confidence": 0.9,
+  "description": "A person is seen walking behind the bar area, which appears to be a restricted zone for staff only.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|630|person": {
+  "confidence": 0.9,
+  "description": "An individual is seen entering the restricted bar area behind the counter. No theft or violence is observed in the sequence.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|810|person": {
+  "confidence": 0.9,
+  "description": "An individual is seen walking behind the bar area, which is a restricted zone. No signs of theft or violence are visible in the footage.",
+  "event_type": "intrusion",
+  "severity": 2
+ },
+ "Fighting002_x264|90|person": {
+  "confidence": 0.95,
+  "description": "A bartender is working behind the bar, interacting with customers in a standard service setting. No unauthorized entry or suspicious behavior is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Normal_Videos_003_x264|1710|person": {
+  "confidence": 0.95,
+  "description": "A dog is scavenging in a yellow container on the sidewalk. No human intrusion is visible in the frames.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "Normal_Videos_003_x264|2790|person": {
+  "confidence": 0.95,
+  "description": "A dog is walking in the area and sniffing around a yellow container. No human presence or criminal activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "shanghaitech_01_0014|0|person": {
+  "confidence": 0.95,
+  "description": "Two people are sitting on a ledge in a public area. No suspicious activity is observed.",
+  "event_type": "normal",
+  "severity": 1
+ },
+ "shanghaitech_01_0014|75|person": {
+  "confidence": 0.95,
+  "description": "People are walking through a public outdoor area and sitting on a ledge. No unauthorized activity or suspicious behavior is observed.",
+  "event_type": "normal",
+  "severity": 1
+ }
+}

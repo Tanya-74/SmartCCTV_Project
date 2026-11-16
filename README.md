@@ -24,6 +24,8 @@ video -> YOLOv8 detection -> ByteTrack tracking -> zone-breach trigger
 | `vlm.py` | Picks key frames, calls Gemini with a structured-output schema, returns `{event_type, severity, description, confidence}` |
 | `alerts.py` | Creates alert records (timestamp, type, severity, description, snapshot, source video) when severity >= 3; stores them in `data/alerts.json` |
 | `streams.py` | Live input: reader thread (always keeps only the newest frame), processing thread (~10 fps through the same pipeline), automatic reconnect |
+| `scripts/tune_coordinate_descent.py` | Hand-written Coordinate Descent (+ grid search for comparison) on cached results |
+| `scripts/build_tuning_cache.py`, `scripts/tuning_common.py` | Build / share the YOLO and Gemini caches used by the tuner |
 | `scripts/demo_playwright.py` | Playwright script that drives the dashboard in a visible browser for demos |
 | `scripts/simulate_rtsp.py` | Fake IP camera for demos: loops a video file as an RTSP stream on this computer |
 | `main.py` | FastAPI app: upload, background processing queue, alert endpoints, WebSocket |
@@ -133,6 +135,110 @@ If the camera loses power or the network drops, the system shows `reconnecting` 
 resumes by itself. If Gemini is slow, new breaches are skipped (counted as "skipped") rather
 than queued forever, so the feed never falls behind real time. Because a live feed is
 processed at about 10 frames per second, the load stays modest even on a laptop GPU.
+
+## Optimisation experiment: tuning the alert parameters with Coordinate Descent
+
+### What was tuned
+
+Four settings decide whether the system raises an alert (the "coordinates"):
+
+| Parameter | Meaning | Values searched | Default |
+|---|---|---|---|
+| `alert_min_severity` | Gemini severity needed for an alert | 1-5 | 3 |
+| `yolo_conf` | YOLO confidence needed to keep a detection | 0.15-0.65 (11 values) | 0.35 |
+| `min_frames_in_zone` | consecutive frames in the zone before it counts as a breach | 1-30 (8 values) | 3 |
+| `min_gemini_confidence` | Gemini's own confidence needed to accept its answer | 0.0-0.95 (8 values) | 0.0 (off) |
+
+**Objective (maximised):** `J = F1 - 0.05 x (alerts raised on normal videos)`. F1 is per video -
+"did the system raise at least one alert?" against the file-name label (Assault / Burglary / Arson /
+Fighting = incident; Normal and the ShanghaiTech sequence = normal). With 6 videos F1 can only jump
+in big steps, so the false-alarm penalty adds a smaller graded cost; that term is my modelling choice,
+not part of F1.
+
+### Why Coordinate Descent fits
+
+The objective is a black box (it runs a pipeline), is not differentiable (alerts are counts and
+thresholds), and each parameter has a short list of sensible values. Coordinate Descent needs no
+gradient: it holds three parameters fixed, tries every value of the fourth (a 1-D line search),
+keeps the best, moves to the next parameter, and repeats full cycles until a cycle changes nothing
+(or 10 cycles). It is a few lines of code (`coordinate_descent()` in the script) and each step can be
+explained on its own. A plain grid search over the same ranges is run as a comparison.
+
+### How it was made cheap (no repeated API calls)
+
+1. `scripts/build_tuning_cache.py` ran YOLO + ByteTrack once per video at confidence 0.15 and saved
+   every box (`experiments/detections_cache.json.gz`). Stricter confidences are simulated by
+   dropping weak boxes. The replayed breaches were checked against the real pipeline on two videos
+   and matched exactly.
+2. It then collected every clip that *any* parameter setting could trigger (136 clips; trigger times
+   rounded to 3-second slots) and sent each to Gemini once (`experiments/gemini_cache.json`:
+   event type, severity, confidence, description).
+3. `scripts/tune_coordinate_descent.py` runs entirely offline on those caches (0.1 s for Coordinate
+   Descent, under 1 s for the full grid). To make this possible, `ZoneTrigger` (the breach decision
+   rule) was split out of `ZoneMonitor` in `tracking.py`; the live pipeline's output is unchanged.
+
+```
+python scripts/tune_coordinate_descent.py        # offline, uses the committed caches
+python scripts/build_tuning_cache.py             # only to rebuild the caches (needs videos + Gemini key)
+```
+(The experiment uses the whole-frame zone so that every person counts; the zone polygon itself is not tuned.)
+
+### Results
+
+| Parameter | Default | Tuned (Coordinate Descent) | Grid-search best |
+|---|---|---|---|
+| `alert_min_severity` | 3 | 1 | 1 |
+| `yolo_conf` | 0.35 | 0.35 | 0.15 |
+| `min_frames_in_zone` | 3 | 3 | 1 |
+| `min_gemini_confidence` | 0.0 | 0.0 | 0.0 |
+| **F1 (video level)** | **0.857** | **1.000** | **1.000** |
+| false-alarm alerts | 0 | 0 | 0 |
+| TP / FP / FN / TN | 3 / 0 / 1 / 2 | 4 / 0 / 0 / 2 | 4 / 0 / 0 / 2 |
+
+| Video | Truth | Alerts at default | Alerts at tuned |
+|---|---|---|---|
+| Arson001 | incident | 2 | 7 |
+| Assault001 | incident | 6 | 8 |
+| Burglary001 | incident | 6 | 6 |
+| Fighting002 | incident | 0 | 2 |
+| Normal_Videos_003 | normal | 0 | 0 |
+| shanghaitech_01_0014 | normal | 0 | 0 |
+
+**Cost:** Coordinate Descent converged after 2 cycles with **65** objective evaluations; grid search
+needed **3,520** (54x more) and found the same best score (J = 1.0). 922 of the 3,520 grid points tie
+at that score.
+
+![Coordinate Descent objective vs iteration](tuning_coordinate_descent.png)
+
+*(one iteration = one 1-D line search; filled circle = that parameter's update, hollow = tried, no change)*
+
+### How to read this result (honest limitations)
+
+- **The "improvement" comes from one video and one parameter.** Only lowering `alert_min_severity`
+  from 3 to 1 changed anything: Fighting002 went from "missed" to "caught". But the clips Gemini flagged
+  there say things like "a person is walking behind the bar counter, no signs of violence" (intrusion,
+  severity 2). The video-level label rewards an alert on a fight video even though the fight itself was
+  not what triggered it.
+- **The normal videos cannot punish a low threshold.** Between them they produced only 4 clips, all
+  rated `normal`, severity 1, so they raise no alert at *any* setting. Severity 1 therefore looks free,
+  but in real use it would alert on anything Gemini does not call normal. With so little normal footage the
+  experiment cannot see that cost. The false-alarm penalty has no effect here for the same reason.
+- **Tiny dataset:** 6 videos (4 incident, 2 normal). F1 moves in steps of 0.1-0.2, the same videos are used
+  to tune and to score (so "after" is a training score, not a test score), and nothing here is a
+  statistically meaningful estimate.
+- **Flat, discrete, non-smooth objective:** 26% of the grid ties for the best score, so many different
+  settings are "optimal" and which one is reported depends on tie-breaking (Coordinate Descent keeps the
+  current value unless a strictly better one exists; the grid search reports the first best in scan order,
+  which is why they differ on `yolo_conf` and `min_frames_in_zone`). Coordinate Descent can also get stuck
+  where moving one parameter alone never helps; it gives no guarantee of a global optimum. Here it happened
+  to match grid search.
+- **Gemini's confidence barely varies** (0.80-1.00 across all clips), so `min_gemini_confidence` cannot
+  separate anything in this data.
+- **Approximations:** tracks were computed once at confidence 0.15 and filtered upwards (not re-tracked
+  per setting), and a breach reuses the cached answer of the nearest 3-second slot rather than its exact clip.
+- **Conclusion:** the method works and is cheap, but this data cannot support changing the defaults.
+  The shipped values (`ALERT_MIN_SEVERITY = 3`, etc.) were **not** changed. Useful next steps would be more
+  labelled normal footage with real activity, and clip-level labels instead of video-level ones.
 
 ## Restricted zone
 
