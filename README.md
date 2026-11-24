@@ -272,3 +272,10 @@ frame (0-1), so it works at any resolution.
 - Gemini can be overloaded (503); the app retries and falls back across models, but a clip can still fail (shown in `/status` errors).
 - Live streams: each loads its own YOLO model (max 2 at once). Only video is used (no audio), and alert timestamps for live streams are seconds since the stream started.
 - Jobs are processed one at a time; alerts live in a JSON file (not a database).
+
+## Final report, slides and demo (Phase 2)
+- `report/Final_Project_Report.docx` (+ `.pdf`) - 12-section report; `report/Final_Presentation.pptx` - slides with speaker notes.
+- `python scripts/evaluate_baselines.py` - baselines, dataset statistics and charts (offline, from the caches); results in `report/results.json`.
+- `python scripts/build_report.py` and `powershell -File scripts/build_slides.ps1` rebuild the report and slides (the latter needs PowerPoint).
+- `DEMO_CHECKLIST.md` - evaluation-day steps, what works offline, and safe screen sharing.
+- Honest summary: the default system (F1 0.857) beats the always-alert baseline (0.800) but not the zone-breach-only baseline (0.889) on the 6 sample videos; the gap is one video.

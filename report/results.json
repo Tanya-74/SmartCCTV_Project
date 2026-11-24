@@ -1,0 +1,241 @@
+{
+ "videos": [
+  {
+   "video": "Arson001_x264",
+   "label": "incident",
+   "frames": 4187,
+   "fps": 30.0,
+   "width": 320,
+   "height": 240,
+   "seconds": 139.6,
+   "breaches": 11,
+   "boxes_person": 1042,
+   "boxes_vehicle": 6623
+  },
+  {
+   "video": "Assault001_x264",
+   "label": "incident",
+   "frames": 2486,
+   "fps": 30.0,
+   "width": 320,
+   "height": 240,
+   "seconds": 82.9,
+   "breaches": 8,
+   "boxes_person": 4149,
+   "boxes_vehicle": 439
+  },
+  {
+   "video": "Burglary001_x264",
+   "label": "incident",
+   "frames": 3969,
+   "fps": 30.0,
+   "width": 320,
+   "height": 240,
+   "seconds": 132.3,
+   "breaches": 6,
+   "boxes_person": 1172,
+   "boxes_vehicle": 69
+  },
+  {
+   "video": "Fighting002_x264",
+   "label": "incident",
+   "frames": 2688,
+   "fps": 30.0,
+   "width": 320,
+   "height": 240,
+   "seconds": 89.6,
+   "breaches": 3,
+   "boxes_person": 262,
+   "boxes_vehicle": 0
+  },
+  {
+   "video": "Normal_Videos_003_x264",
+   "label": "normal",
+   "frames": 2822,
+   "fps": 30.0,
+   "width": 320,
+   "height": 240,
+   "seconds": 94.1,
+   "breaches": 0,
+   "boxes_person": 2,
+   "boxes_vehicle": 0
+  },
+  {
+   "video": "shanghaitech_01_0014",
+   "label": "normal",
+   "frames": 150,
+   "fps": 25.0,
+   "width": 856,
+   "height": 480,
+   "seconds": 6.0,
+   "breaches": 1,
+   "boxes_person": 350,
+   "boxes_vehicle": 0
+  }
+ ],
+ "baselines": {
+  "B0 never alert": {
+   "TP": 0,
+   "FP": 0,
+   "FN": 4,
+   "TN": 2,
+   "precision": 0.0,
+   "recall": 0.0,
+   "F1": 0.0
+  },
+  "B1 always alert (majority class)": {
+   "TP": 4,
+   "FP": 2,
+   "FN": 0,
+   "TN": 0,
+   "precision": 0.667,
+   "recall": 1.0,
+   "F1": 0.8
+  },
+  "B2 zone breach only (no VLM)": {
+   "TP": 4,
+   "FP": 1,
+   "FN": 0,
+   "TN": 1,
+   "precision": 0.8,
+   "recall": 1.0,
+   "F1": 0.889
+  },
+  "Ours: YOLO+track+zone+Gemini (defaults)": {
+   "TP": 3,
+   "FP": 0,
+   "FN": 1,
+   "TN": 2,
+   "precision": 1.0,
+   "recall": 0.75,
+   "F1": 0.857
+  },
+  "Ours, severity>=1 (tuning result, NOT adopted)": {
+   "TP": 4,
+   "FP": 0,
+   "FN": 0,
+   "TN": 2,
+   "precision": 1.0,
+   "recall": 1.0,
+   "F1": 1.0
+  }
+ },
+ "severity_ablation": [
+  {
+   "sev": 1,
+   "F1": 1.0,
+   "FP": 0,
+   "FN": 0,
+   "false_alarm_alerts": 0
+  },
+  {
+   "sev": 2,
+   "F1": 1.0,
+   "FP": 0,
+   "FN": 0,
+   "false_alarm_alerts": 0
+  },
+  {
+   "sev": 3,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1,
+   "false_alarm_alerts": 0
+  },
+  {
+   "sev": 4,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1,
+   "false_alarm_alerts": 0
+  },
+  {
+   "sev": 5,
+   "F1": 0.667,
+   "FP": 0,
+   "FN": 2,
+   "false_alarm_alerts": 0
+  }
+ ],
+ "confidence_ablation": [
+  {
+   "min_conf": 0.0,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1
+  },
+  {
+   "min_conf": 0.8,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1
+  },
+  {
+   "min_conf": 0.9,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1
+  },
+  {
+   "min_conf": 0.95,
+   "F1": 0.857,
+   "FP": 0,
+   "FN": 1
+  }
+ ],
+ "event_types": {
+  "other": 2,
+  "normal": 6,
+  "intrusion": 7,
+  "vandalism": 8,
+  "assault": 6
+ },
+ "severities": {
+  "1": 6,
+  "2": 9,
+  "4": 11,
+  "5": 3
+ },
+ "gemini_conf_min": 0.8,
+ "gemini_conf_max": 1.0,
+ "clips_scored": 29,
+ "alerts_default": {
+  "Arson001_x264": 2,
+  "Assault001_x264": 6,
+  "Burglary001_x264": 6,
+  "Fighting002_x264": 0,
+  "Normal_Videos_003_x264": 0,
+  "shanghaitech_01_0014": 0
+ },
+ "alerts_sev1": {
+  "Arson001_x264": 7,
+  "Assault001_x264": 8,
+  "Burglary001_x264": 6,
+  "Fighting002_x264": 2,
+  "Normal_Videos_003_x264": 0,
+  "shanghaitech_01_0014": 0
+ },
+ "per_video_events": {
+  "Arson001_x264": {
+   "other": 2,
+   "normal": 4,
+   "intrusion": 3,
+   "vandalism": 2
+  },
+  "Assault001_x264": {
+   "assault": 6,
+   "intrusion": 2
+  },
+  "Burglary001_x264": {
+   "vandalism": 6
+  },
+  "Fighting002_x264": {
+   "normal": 1,
+   "intrusion": 2
+  },
+  "Normal_Videos_003_x264": {},
+  "shanghaitech_01_0014": {
+   "normal": 1
+  }
+ }
+}

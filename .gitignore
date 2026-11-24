@@ -4,3 +4,5 @@ __pycache__/
 data/
 *.pt
 tools/
+
+report/slide_preview/
