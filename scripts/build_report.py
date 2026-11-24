@@ -67,7 +67,7 @@ B(["Labels are video-level and come from the dataset's own file naming (Arson / 
 # ------------------------------------------------------------------ 3
 H("3. Data Preparation")
 B(["Frames are read with OpenCV. No frames are resized by us except YOLO's internal 640-pixel resize.",
-   "Restricted zone: a polygon in normalised 0-1 coordinates, tested at each object's foot point. For the evaluation we use the whole frame as the zone, because the UCF cameras are different in every video and one fixed polygon cannot fit them all.",
+   "Restricted zone: a polygon in normalized 0-1 coordinates, tested at each object's foot point. For the evaluation we use the whole frame as the zone, because the UCF cameras are different in every video and one fixed polygon cannot fit them all.",
    "Only COCO classes person, bicycle, car, motorcycle, bus, truck are kept; everything else is ignored.",
    "To make tuning cheap and repeatable, YOLO + ByteTrack was run once per video at a low confidence (0.15) and every box was cached; stricter confidence values are simulated later by dropping weak boxes. All 136 distinct clips any setting could trigger were sent to Gemini once and cached (experiments/gemini_cache.json).",
    "Leakage check: the clip sent to Gemini contains only pixels from the video. The file name and label never enter the model input; labels are used only in the scoring code (tuning_common.label_of)."])
@@ -86,7 +86,7 @@ B([f'Event types: {R["event_types"]}. Severity counts: {R["severities"]}. Gemini
 H("5. ML Methodology")
 T(["Stage", "Tool", "Why"],
   [["Detect", "YOLOv8s (pretrained COCO)", "Fast, runs on the laptop GPU (RTX 3050 6 GB), detects people and vehicles."],
-   ["Track", "ByteTrack", "Gives each object a stable ID so one person is not analysed again every frame."],
+   ["Track", "ByteTrack", "Gives each object a stable ID so one person is not analyzed again every frame."],
    ["Trigger", "Zone polygon + min frames in zone + cooldowns", "Avoids sending every frame to a paid, slow API: only moments of interest go to the VLM."],
    ["Understand", "Gemini (google-genai), structured JSON output", "A VLM can describe actions (fighting, fire, theft) that a box detector cannot."],
    ["Decide", "Alert if event is not 'normal' and severity >= 3", "Simple, explainable rule that a user can adjust."],
@@ -144,7 +144,7 @@ B(["Why did the system miss Fighting002? It had only 3 breaches; Gemini called t
 # ------------------------------------------------------------------ 10
 H("10. Limitations")
 B(["Tiny evaluation set: 6 videos with video-level labels. Results are a demonstration, not a benchmark. The tuned parameters were selected and scored on the same data (no held-out test set).",
-   "The normal class is almost empty of people; false-alarm behaviour on busy normal scenes is untested.",
+   "The normal class is almost empty of people; false-alarm behavior on busy normal scenes is untested.",
    "Low-resolution footage (320x240); no Robbery or Stealing videos.",
    "Triggers fire only on zone entry: crimes outside the zone, or between people already in the zone, are missed (Fighting002).",
    "The VLM stage needs the internet and a Google API key; it can be overloaded or rate-limited (we saw 429, 503 and 504 errors) and each call takes about 5 seconds. Without internet, detection and tracking still run but no alerts are classified.",
@@ -154,7 +154,7 @@ B(["Tiny evaluation set: 6 videos with video-level labels. Results are a demonst
 # ------------------------------------------------------------------ 11
 H("11. Conclusion and Future Scope")
 P("Was the problem addressed? Yes as a working system: a person or vehicle entering a zone is detected, tracked, "
-  "analysed by a VLM and shown as a described alert on a dashboard, from uploaded video or from a live RTSP camera. "
+  "analyzed by a VLM and shown as a described alert on a dashboard, from uploaded video or from a live RTSP camera. "
   "Was the numeric success criterion met? Against the always-alert baseline yes (0.857 vs 0.800); against the zone-breach-only baseline no (0.857 vs 0.889). "
   "We report this as it is.")
 B(["Evaluate on a proper labelled set (full UCF-Crime test split with temporal annotations) with a held-out split, and measure alerts per hour on long normal footage.",

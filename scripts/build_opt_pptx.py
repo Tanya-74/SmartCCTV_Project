@@ -86,16 +86,16 @@ def table(s, rows, x, y, w, colw, size=14, h=None):
 s = pres.Slides.Add(1, 12); n[0] = 1
 bg = s.Shapes.AddShape(1, 0, 0, W, H); bg.Fill.ForeColor.RGB = NAVY; bg.Line.Visible = False
 text(s, "Choosing Alert Parameters for Smart CCTV", 60, 120, 840, 70, 42, WHITE).TextFrame.TextRange.Font.Bold = True
-text(s, "Formulation and comparison of optimisation algorithms", 60, 200, 840, 50, 26, rgb(0xDDE6F0))
+text(s, "Formulation and comparison of optimization algorithms", 60, 200, 840, 50, 26, rgb(0xDDE6F0))
 text(s, "CS4101 - Introduction to Linear and Nonlinear Optimization - Phase 2\n25 November 2026", 60, 320, 840, 70, 18, rgb(0xBBCCE0))
 text(s, "Tanya Sharma | BT24GCS667 | B.Tech 2024, AI & Data Science | Section A6 | Faculty: Dr. Sachin Dube", 60, 430, 840, 30, 16, rgb(0xBBCCE0))
 
-s = slide("1. The problem to optimise")
+s = slide("1. The problem to optimize")
 bullets(s, [
     "Same real problem as our ML project: detect intrusions and crimes in CCTV video.",
     "The system raises an alert only if four thresholds are passed. Someone must choose them.",
     "Too loose: false alarms, guards ignore it. Too strict: real incidents are missed.",
-    "This project is NOT model training. The object being optimised is the decision rule.",
+    "This project is NOT model training. The object being optimized is the decision rule.",
     "Goal: formulate the choice mathematically, implement several algorithms, compare them, and improve one.",
 ], size=21)
 
@@ -104,8 +104,8 @@ bullets(s, [
     "Variables x = (s, c, m, q): alert severity {1..5}; YOLO confidence {0.15..0.65}; frames in zone {1..30}; Gemini confidence {0..0.95}. |X| = 3,520 grid points.",
     "Per video v: a_v(x) = number of clips with type != normal, severity >= s, confidence >= q (the clips depend on c and m).",
     "F1(x) from 'a_v >= 1' versus the video label; FA(x) = alerts on normal videos.",
-    "Maximise J(x) = F1(x) - 0.05 x FA(x)      (equivalently minimise f = -J).",
-    "Constraint form: minimise -F1 subject to g1(x) = FA(x) <= 0 and bounds on each variable; g1 is handled by an exterior penalty.",
+    "Maximize J(x) = F1(x) - 0.05 x FA(x)      (equivalently minimize f = -J).",
+    "Constraint form: minimize -F1 subject to g1(x) = FA(x) <= 0 and bounds on each variable; g1 is handled by an exterior penalty.",
     "J is piecewise constant, non-differentiable, a black box (about 1 ms per evaluation from cached data).",
 ], size=18)
 
@@ -114,7 +114,7 @@ pic(s, "optimization/landscape_slices.png", 30, 95, w=900)
 bullets(s, [
     "J versus each variable (others fixed at the CD solution): flat plateaus and sudden jumps, no slopes.",
     "The gradient is 0 almost everywhere. LP / simplex does not apply either: J is a counting function.",
-    "922 of 3,520 points (26%) share the maximum J = 1.0: a plateau, not a single minimiser.",
+    "922 of 3,520 points (26%) share the maximum J = 1.0: a plateau, not a single minimizer.",
 ], y=330, h=190, size=19)
 
 s = slide("4. Algorithms (all written by hand)")
@@ -195,7 +195,7 @@ bullets(s, [
     "One cached, in-sample objective with 3,520 points: brute force solves it in a few seconds. This is a study of methods, not a necessity.",
     "100 starts, no significance tests. The J = 1.0 optimum (severity 1) is in-sample and not trusted as a real setting (see the ML project).",
     "Conclusion: derivative-free global methods fit this problem; CD is cheapest but can stall; the SA + CD hybrid fixed CD's weakness.",
-    "Future: a bigger search space (zone polygon, clip length), held-out videos, a smoothed objective, tie-aware CD, Bayesian optimisation.",
+    "Future: a bigger search space (zone polygon, clip length), held-out videos, a smoothed objective, tie-aware CD, Bayesian optimization.",
 ], size=20)
 
 s = slide("Live demo")

@@ -38,7 +38,7 @@ def T(head, rows):
 pct = lambda x: f"{100 * x:.0f}%"
 f3 = lambda x: "-" if x is None else f"{x:.1f}"
 
-doc.add_heading("Choosing Alert Parameters for a Smart CCTV System: Formulation and Comparison of Optimisation Algorithms", 0)
+doc.add_heading("Choosing Alert Parameters for a Smart CCTV System: Formulation and Comparison of Optimization Algorithms", 0)
 P("CS4101 - Introduction to Linear and Nonlinear Optimization - Phase 2 Final Project Report")
 P("Tanya Sharma, BT24GCS667, B.Tech 2024 AI & DS, Section A6. Faculty: Dr. Sachin Dube.      Evaluation date: 25 November 2026")
 
@@ -47,10 +47,10 @@ H("1. Introduction and Problem Description")
 P("The real-world problem (shared with our Machine Learning project) is perimeter intrusion and crime detection in CCTV video. "
   "A pipeline detects people and vehicles (YOLOv8), tracks them (ByteTrack), checks when they enter a restricted zone, and sends a short clip "
   "to a vision-language model (Gemini) that returns an event type, a severity from 1 to 5 and a confidence. An alert is raised when the answer passes a set of thresholds.")
-P("The optimisation problem. Those thresholds are four numbers that someone must choose. If they are too loose the system raises false alarms and guards learn to ignore it; "
-  "if they are too strict it misses real incidents. This report formulates that choice as a mathematical optimisation problem, solves it with several algorithms, "
+P("The optimization problem. Those thresholds are four numbers that someone must choose. If they are too loose the system raises false alarms and guards learn to ignore it; "
+  "if they are too strict it misses real incidents. This report formulates that choice as a mathematical optimization problem, solves it with several algorithms, "
   "compares them on the same problem, and proposes and tests an improvement. It does not repeat ML model training or report predictive accuracy; the ML project and this one share the data, "
-  "but here the object being optimised is the decision rule.")
+  "but here the object being optimized is the decision rule.")
 P("Applicability of method families (brief; the full survey was Phase 1):", bold=True)
 T(["Method family", "Applicable?", "Reason for this problem"],
   [["Gradient descent, Newton, quasi-Newton", "No", "The objective is piecewise constant in the thresholds: the gradient is zero almost everywhere and undefined at the jumps."],
@@ -82,9 +82,9 @@ EQ("a_v(x) = sum over k in B_v(c, m) of  1[ type_k != normal  AND  severity_k >=
 P("A video is predicted 'incident' when a_v(x) >= 1. With TP, FP, FN counted over the 6 videos,")
 EQ("F1(x) = 2 TP / (2 TP + FP + FN),        FA(x) = sum over videos with y_v = 0 of a_v(x)   (alerts on normal videos)")
 P("We want high F1 and few false-alarm alerts:")
-EQ("maximise  J(x) = F1(x) - lambda * FA(x),  lambda = 0.05      (equivalently  minimise  f(x) = -J(x))")
+EQ("maximize  J(x) = F1(x) - lambda * FA(x),  lambda = 0.05      (equivalently  minimize  f(x) = -J(x))")
 H("2.4 Constraints", 2)
-P("The natural constrained form is: minimise f(x) = -F1(x) subject to the inequality constraint g_1(x) = FA(x) <= 0 (no alert on a normal video) and the bound constraints "
+P("The natural constrained form is: minimize f(x) = -F1(x) subject to the inequality constraint g_1(x) = FA(x) <= 0 (no alert on a normal video) and the bound constraints "
   "g_2..g_9: lower and upper bounds on each variable. There are no equality constraints except that each variable must be a member of its grid, which is the discrete domain. "
   "We treat g_1 with an exterior penalty: infeasible points are not forbidden but pay lambda per unit of violation, giving the unconstrained form J above. "
   "Because the penalty is small, the penalised optimum could in principle be infeasible; the sensitivity study in Section 5.5 shows the result is the same for lambda from 0 to 0.5, and the optimum has FA = 0, so it is feasible.")
@@ -94,8 +94,8 @@ B(["J takes only a few distinct values (F1 over 6 videos moves in steps), so it 
    "Assumptions: the video-level labels are correct; the cached Gemini answers are treated as deterministic (in reality a repeat call can differ); the same 6 videos are used for choosing and for scoring x. The last point means the optimum found is an in-sample optimum (discussed in Section 7)."])
 
 # ------------------------------------------------------------------------------ 3
-H("3. Selection and Description of the Optimisation Algorithms")
-P("All algorithms below were written by hand in Python (no optimisation library) so that every update equation is explicit. They all see the same objective J through the same wrapper that counts evaluations.")
+H("3. Selection and Description of the Optimization Algorithms")
+P("All algorithms below were written by hand in Python (no optimization library) so that every update equation is explicit. They all see the same objective J through the same wrapper that counts evaluations.")
 H("3.1 Coordinate Descent (CD)", 2)
 P("Idea: improve one variable at a time with the others fixed. For cycle t = 1, 2, ... and each coordinate i = 1..4 in turn, do a one-dimensional line search over its grid:")
 EQ("x_i  <-  argmax over v in G_i of J(x_1, ..., x_{i-1}, v, x_{i+1}, ..., x_4),   only if the best value is STRICTLY larger than J(x)")
@@ -174,7 +174,7 @@ B([f"Reliability: SA, RS and the hybrid reach J* from every one of 100 random st
    "So there is no single winner. CD is the cheapest and self-terminating but not always right; SA/RS/HYB are always right but must spend a fixed budget."])
 H("6.2 Did the algorithms converge to the same solution?", 2)
 P("They reach the same optimal value J* = 1.0 but not the same point: 922 grid points tie, and different algorithms stop at different ones (CD from default stops at severity 1, YOLO confidence 0.35, 3 frames, no confidence filter). "
-  "The optimum is a large flat plateau, not a unique minimiser, which is why 'same solution' has to be read as 'same objective value'. "
+  "The optimum is a large flat plateau, not a unique minimizer, which is why 'same solution' has to be read as 'same objective value'. "
   "When an algorithm did not reach J*, it ended at J = 0.857 (or lower for NM), which is the plateau where Fighting002 yields no alert.")
 H("6.3 What explains the differences?", 2)
 B(["CD fails when it starts on a plateau where no single-coordinate move changes J. Example from our runs: start (severity 5, conf 0.45, 20 frames, q = 0) ends at the same point with J = 0.857, because changing any one variable leaves the set of alerts unchanged. "
@@ -199,13 +199,13 @@ B(["All results come from one cached, in-sample objective with 3,520 points; the
 
 # ------------------------------------------------------------------------------ 7
 H("7. Conclusion and Future Scope")
-P("We formulated the choice of alert thresholds of a CCTV system as a box-bounded discrete optimisation of a piecewise-constant black-box objective J = F1 - lambda x (false-alarm alerts), implemented Coordinate Descent, "
+P("We formulated the choice of alert thresholds of a CCTV system as a box-bounded discrete optimization of a piecewise-constant black-box objective J = F1 - lambda x (false-alarm alerts), implemented Coordinate Descent, "
   "Simulated Annealing, Random Search, Nelder-Mead and Grid Search by hand, and compared them on the same problem. All methods can improve on the default (J = 0.857); the true optimum is J = 1.0 on a plateau of 922 points. "
   "Derivative-based methods do not apply. CD is the cheapest but fails from 23% of starts because it stalls on plateaus; Nelder-Mead fails most often for the same reason; SA, RS and the proposed SA + CD hybrid never failed in 100 starts. "
   "The hybrid fixed CD's weakness with about half of SA's evaluations. The main caution is that the problem is small and easy, so the ranking of algorithms is limited evidence.")
 B(["Enlarge the search space (zone polygon coordinates, clip length, cooldowns) so brute force is no longer possible; this is where the methods would really differ.",
-   "Evaluate on a held-out set of videos so the optimum reflects generalisation, not fit to 6 clips; use a smoothed objective (for example the mean of the per-video margin between severity and threshold) to give gradient-like information.",
-   "Try a tie-aware CD, genetic algorithms or Bayesian optimisation for noisy VLM answers; treat Gemini's randomness explicitly with repeated evaluations."])
+   "Evaluate on a held-out set of videos so the optimum reflects generalization, not fit to 6 clips; use a smoothed objective (for example the mean of the per-video margin between severity and threshold) to give gradient-like information.",
+   "Try a tie-aware CD, genetic algorithms or Bayesian optimization for noisy VLM answers; treat Gemini's randomness explicitly with repeated evaluations."])
 
 # ------------------------------------------------------------------------------ 8
 H("8. References")

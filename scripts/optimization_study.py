@@ -1,8 +1,8 @@
-"""CS4101 optimisation study: choose the alert-decision parameters of the Smart CCTV system. FULLY OFFLINE.
+"""CS4101 optimization study: choose the alert-decision parameters of the Smart CCTV system. FULLY OFFLINE.
 
     python scripts/optimization_study.py            # ~1-3 minutes, writes optimization/*.png and results.json
 
-Problem (see the report, Section 2):  maximise J(x) = F1(x) - lambda * FA(x)   over a box-bounded discrete set
+Problem (see the report, Section 2):  maximize J(x) = F1(x) - lambda * FA(x)   over a box-bounded discrete set
 x = (alert_min_severity, yolo_conf, min_frames_in_zone, min_gemini_confidence).
 J is evaluated by replaying cached YOLO detections + cached Gemini answers (see tuning_common.py), so one
 objective evaluation costs about a millisecond and no network is needed.

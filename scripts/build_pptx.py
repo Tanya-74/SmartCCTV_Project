@@ -200,8 +200,8 @@ bullets(s, [
     "Result: J = 1.00 in 65 evaluations. Grid search: same J in 3,520 evaluations (54x more).",
     "But 922 of 3,520 grid points tie, and tuning and scoring used the same 6 videos.",
     "So we kept the defaults. The tuned severity-1 value is reported as an experiment, not adopted.",
-], x=40, y=95, w=470, h=430, size=17)
-pic(s, "tuning_coordinate_descent.png", 520, 120, 410)
+], x=30, y=95, w=420, h=430, size=15)
+pic(s, "tuning_coordinate_descent.png", 460, 130, 480)
 notes(s, "This is the honest answer to 'did tuning help?': it found a better score, but the data cannot justify changing the defaults.")
 
 # 7 ------------------------------------------------------------------------------------------ results
@@ -233,7 +233,7 @@ notes(s, "Critical-insights slide: why, not just what.")
 s = slide("10. Limitations")
 bullets(s, [
     "6 videos, video-level labels; tuned and scored on the same data (no held-out test set).",
-    "Normal class is nearly empty of people: false-alarm behaviour on busy normal scenes is untested.",
+    "Normal class is nearly empty of people: false-alarm behavior on busy normal scenes is untested.",
     "Triggers only on zone entry; low-resolution footage; no Robbery / Stealing.",
     "Needs internet and a Google API key for classification; the API can be overloaded (we saw 429 / 503 / 504). Offline: detection and tracking still run, but no alerts are classified.",
     "VLM answers vary between similar clips; confidence is not calibrated.",
@@ -256,8 +256,8 @@ O = json.loads((ROOT / "optimization" / "results.json").read_text())
 s = slide("12. Optimization view (CS4101): the problem")
 bullets(s, [
     "Same project, same 6 videos: choose the alert settings x = (severity s, YOLO confidence c, min frames m, Gemini confidence q).",
-    "x lives on a discrete grid with 3,520 points. Maximise J(x) = F1(x) - 0.05 x FA(x), where FA = alerts on normal videos.",
-    "Equivalent constrained form: minimise -F1(x) subject to FA(x) <= 0, with bounds on every variable (handled by a penalty).",
+    "x lives on a discrete grid with 3,520 points. Maximize J(x) = F1(x) - 0.05 x FA(x), where FA = alerts on normal videos.",
+    "Equivalent constrained form: minimize -F1(x) subject to FA(x) <= 0, with bounds on every variable (handled by a penalty).",
     "J is piecewise constant: it has no useful gradient, so gradient descent cannot be used. Each evaluation is a black-box replay (about 1 ms).",
     "Algorithms implemented by hand: Coordinate Descent, Simulated Annealing, Random Search, Nelder-Mead; Grid Search as the exact reference.",
     "Proposed improvement: a hybrid, Simulated Annealing for 120 evaluations, then Coordinate Descent to polish.",
