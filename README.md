@@ -279,3 +279,18 @@ frame (0-1), so it works at any resolution.
 - `python scripts/build_report.py` and `powershell -File scripts/build_slides.ps1` rebuild the report and slides (the latter needs PowerPoint).
 - `DEMO_CHECKLIST.md` - evaluation-day steps, what works offline, and safe screen sharing.
 - Honest summary: the default system (F1 0.857) beats the always-alert baseline (0.800) but not the zone-breach-only baseline (0.889) on the 6 sample videos; the gap is one video.
+
+## Final evaluation deliverables
+
+| Course | Report | Slides | Reproduce (all offline) |
+|---|---|---|---|
+| Machine Learning (Phase 2) | `report/Final_Project_Report.pdf` / `.docx` | `report/Final_Presentation.pptx` | `python scripts/evaluate_baselines.py` then `python scripts/build_report.py` |
+| Linear and Nonlinear Optimization (Phase 2) | `optimization/Optimization_Report.pdf` / `.docx` | `optimization/Optimization_Presentation.pptx` | `python scripts/optimization_study.py` then `python scripts/build_opt_report.py` |
+
+The optimization study (`scripts/optimization_study.py`) formulates the choice of the four alert thresholds as a box-bounded discrete
+maximisation of J = F1 - 0.05 x false-alarm alerts, and compares Coordinate Descent, Simulated Annealing, Random Search, Nelder-Mead and
+Grid Search, plus a proposed SA + CD hybrid, over 100 random starting points. It needs only the cached detections and Gemini answers in `experiments/`.
+The slide decks are built with the PowerPoint installed on the PC (`scripts/build_pptx.py`, `scripts/build_opt_pptx.py`).
+
+**Without internet:** detection, tracking and zone breaches still run, but Gemini classification (and so new alerts) does not. Everything above, and the
+dashboard with alerts that were saved earlier, works offline.

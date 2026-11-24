@@ -6,3 +6,9 @@ data/
 tools/
 
 report/slide_preview/
+
+# generated previews / logs
+_slide*.png
+report/slide_preview/
+report/_build.log
+data/offline_test.log
