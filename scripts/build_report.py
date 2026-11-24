@@ -35,7 +35,7 @@ def T(head, rows, widths=None):
 # ------------------------------------------------------------------ title
 t = doc.add_heading("Smart CCTV: Real-Time Perimeter Intrusion and Crime Detection using a Vision-Language Model", 0)
 P("NIIT University - Department of Computer Science and Engineering - Machine Learning Project, Phase 2 Final Report")
-P("Team: ______________________   Roll nos.: ______________________   Date of evaluation: 25 November 2026")
+P("Tanya Sharma, BT24GCS667, B.Tech 2024 AI & DS, Section A6. Faculty: Dr. Sachin Dube.   Date of evaluation: 25 November 2026")
 
 # ------------------------------------------------------------------ 1
 H("1. Problem Statement")
@@ -91,6 +91,8 @@ T(["Stage", "Tool", "Why"],
    ["Understand", "Gemini (google-genai), structured JSON output", "A VLM can describe actions (fighting, fire, theft) that a box detector cannot."],
    ["Decide", "Alert if event is not 'normal' and severity >= 3", "Simple, explainable rule that a user can adjust."],
    ["Serve", "FastAPI + WebSocket dashboard, RTSP live input", "Real-time use: upload mode and live-camera mode."]])
+IMG("report/pipeline_diagram.png", w=6.4, cap="Figure 3: the complete pipeline, from camera input to dashboard alert.")
+IMG("report/input_output.png", w=6.4, cap="Figure 4: example input frame, the detector and tracker output with the restricted zone, and the alert shown to the user.")
 P("Why a pretrained pipeline and not a trained model? Labelled incident data with locations in time is not available to us "
   "(labels are per video), and 6 videos is far too few to train a detector or classifier. A zero-shot VLM needs no training data, "
   "which suits this setting. The cost is that we depend on an online service (see Limitations).")
@@ -107,7 +109,7 @@ P("Objective: J = F1 (video-level) - 0.05 x (alerts raised on normal videos). Th
 tr = CD if isinstance(CD, dict) else {}
 P("Result: Coordinate Descent reached J = 1.00 in 65 evaluations (2 cycles); exhaustive grid search needed 3,520 evaluations and reached the same J = 1.00, and 922 of the 3,520 grid points tie. "
   "So Coordinate Descent was about 54 times cheaper for the same answer, but the answer itself is not trustworthy (see Section 9).")
-IMG("tuning_coordinate_descent.png", w=5.8, cap="Figure 3: objective versus step for Coordinate Descent.")
+IMG("tuning_coordinate_descent.png", w=5.8, cap="Figure 5: objective versus step for Coordinate Descent.")
 
 # ------------------------------------------------------------------ 7
 H("7. Results and Evaluation")
@@ -124,7 +126,7 @@ P("System speed (measured earlier on the RTX 3050): live RTSP processing about 9
 
 # ------------------------------------------------------------------ 8
 H("8. Comparison with Baselines")
-IMG("report/baseline_comparison.png", w=5.6, cap="Figure 4: video-level F1 for each baseline and for our system.")
+IMG("report/baseline_comparison.png", w=5.6, cap="Figure 6: video-level F1 for each baseline and for our system.")
 B(["B0 'never alert' F1 = 0.00 and B1 'always alert' F1 = 0.80 (this is the majority-class baseline; it looks good only because 4 of 6 videos are incidents).",
    "B2 'alert on any zone breach, no VLM' F1 = 0.889: one false alarm (ShanghaiTech), no misses.",
    "Our full system at the default threshold F1 = 0.857: no false alarms, but one miss (Fighting002). Margin over B1: +0.057. Margin over B2: -0.032.",

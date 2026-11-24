@@ -40,7 +40,7 @@ f3 = lambda x: "-" if x is None else f"{x:.1f}"
 
 doc.add_heading("Choosing Alert Parameters for a Smart CCTV System: Formulation and Comparison of Optimisation Algorithms", 0)
 P("CS4101 - Introduction to Linear and Nonlinear Optimization - Phase 2 Final Project Report")
-P("Team: [add names and roll numbers]      Evaluation date: 25 November 2026")
+P("Tanya Sharma, BT24GCS667, B.Tech 2024 AI & DS, Section A6. Faculty: Dr. Sachin Dube.      Evaluation date: 25 November 2026")
 
 # ------------------------------------------------------------------------------ 1
 H("1. Introduction and Problem Description")

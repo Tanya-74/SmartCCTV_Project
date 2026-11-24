@@ -88,7 +88,7 @@ bg = s.Shapes.AddShape(1, 0, 0, W, H); bg.Fill.ForeColor.RGB = NAVY; bg.Line.Vis
 text(s, "Choosing Alert Parameters for Smart CCTV", 60, 120, 840, 70, 42, WHITE).TextFrame.TextRange.Font.Bold = True
 text(s, "Formulation and comparison of optimisation algorithms", 60, 200, 840, 50, 26, rgb(0xDDE6F0))
 text(s, "CS4101 - Introduction to Linear and Nonlinear Optimization - Phase 2\n25 November 2026", 60, 320, 840, 70, 18, rgb(0xBBCCE0))
-text(s, "Team: [add names and roll numbers]", 60, 430, 840, 30, 16, rgb(0xBBCCE0))
+text(s, "Tanya Sharma | BT24GCS667 | B.Tech 2024, AI & Data Science | Section A6 | Faculty: Dr. Sachin Dube", 60, 430, 840, 30, 16, rgb(0xBBCCE0))
 
 s = slide("1. The problem to optimise")
 bullets(s, [

@@ -97,7 +97,7 @@ bg = s.Shapes.AddShape(1, 0, 0, W, H); bg.Fill.ForeColor.RGB = NAVY; bg.Line.Vis
 text(s, "Smart CCTV", 60, 130, 840, 70, 54, True, rgb(0xFFFFFF))
 text(s, "Real-Time Perimeter Intrusion and Crime Detection using a Vision-Language Model", 60, 215, 840, 90, 28, False, rgb(0xDDE6F0))
 text(s, "Machine Learning Project - Phase 2 Final Evaluation\nNIIT University, Department of Computer Science and Engineering\n25 November 2026", 60, 340, 840, 90, 18, False, rgb(0xBBCCE0))
-text(s, "Team: [add names and roll numbers]", 60, 450, 840, 30, 16, False, rgb(0xBBCCE0))
+text(s, "Tanya Sharma | BT24GCS667 | B.Tech 2024, AI & Data Science | Section A6\nFaculty: Dr. Sachin Dube", 60, 440, 840, 50, 16, False, rgb(0xBBCCE0))
 notes(s, "Introduce the project in one sentence: a system that watches CCTV video and raises an alert only when something that looks like a real incident enters a restricted zone.")
 
 # 2 ------------------------------------------------------------------------------------------ problem
@@ -126,27 +126,61 @@ bullets(s, [
 notes(s, "Be upfront: this is a small demonstration set. Labels say which video has a crime but not when it happens.")
 
 # 4 ------------------------------------------------------------------------------------------ pipeline
-s = slide("3. Method: a pipeline, no training")
-stages = [("YOLOv8s", "finds people\nand vehicles"), ("ByteTrack", "gives each one\na stable ID"), ("Zone trigger", "inside the zone\nfor 3+ frames?"),
-          ("Gemini VLM", "reads 6 key frames,\nreturns JSON"), ("Alert engine", "severity >= 3\n-> alert"), ("Dashboard", "live feed via\nWebSocket")]
-bw, gap, x0 = 135, 14, 36
-for i, (a, b) in enumerate(stages):
+s = slide("3. Method: the complete pipeline")
+stages = [("Input", "video file or\nlive RTSP feed"), ("YOLOv8s", "finds people\nand vehicles"), ("ByteTrack", "gives each one\na stable ID"),
+          ("Zone trigger", "inside zone\nfor 3+ frames?"), ("Gemini VLM", "reads 6 key\nframes, returns\nJSON"), ("Alert engine", "severity >= 3\n-> alert"), ("Dashboard", "live alerts\nvia WebSocket")]
+bw, gap, x0 = 118, 14, 25
+for i, (a_, b_) in enumerate(stages):
     x = x0 + i * (bw + gap)
-    box = s.Shapes.AddShape(5, x, 120, bw, 120); box.Fill.ForeColor.RGB = ACCENT if i != 3 else RED; box.Line.Visible = False
-    r = box.TextFrame.TextRange; r.Text = a + "\r" + b; r.Font.Size = 15; r.Font.Color.RGB = rgb(0xFFFFFF); r.Font.Name = "Calibri"
-    r.Paragraphs(1).Font.Bold = True; r.Paragraphs(1).Font.Size = 18
+    box = s.Shapes.AddShape(5, x, 105, bw, 125); box.Fill.ForeColor.RGB = ACCENT if i != 4 else RED; box.Line.Visible = False
+    if i == 0 or i == 6:
+        box.Fill.ForeColor.RGB = NAVY
+    r = box.TextFrame.TextRange; r.Text = a_ + "\r" + b_; r.Font.Size = 13; r.Font.Color.RGB = rgb(0xFFFFFF); r.Font.Name = "Calibri"
+    r.Paragraphs(1).Font.Bold = True; r.Paragraphs(1).Font.Size = 16
     if i < len(stages) - 1:
-        ar = s.Shapes.AddTextbox(1, x + bw - 4, 160, 24, 30); ar.TextFrame.TextRange.Text = ">"; ar.TextFrame.TextRange.Font.Size = 22; ar.TextFrame.TextRange.Font.Color.RGB = GREY
+        ar = s.Shapes.AddTextbox(1, x + bw - 2, 145, 20, 30); ar.TextFrame.TextRange.Text = ">"; ar.TextFrame.TextRange.Font.Size = 20; ar.TextFrame.TextRange.Font.Color.RGB = GREY
+labels = ["frames", "boxes + class", "boxes + track IDs", "breach event", "type, severity, text", "alert + snapshot", "browser"]
+for i, lab in enumerate(labels):
+    text(s, lab, x0 + i * (bw + gap) - 6, 235, bw + 12, 24, 12, False, ACCENT, 2)
+text(s, "Red box = the only stage that needs the internet. Blue = runs locally. Dark = input / output.", 30, 262, 900, 24, 13, False, GREY)
 bullets(s, [
+    "Only the moment of interest goes to Gemini (a slow, paid API), not every frame: a 6-second clip around each zone entry.",
     "Why pretrained and not trained: labels are per video and only 6 videos exist, far too few to train a detector or classifier. A zero-shot VLM needs no training data.",
-    "Only moments of interest go to Gemini (a slow, paid API), not every frame.",
-    "Inputs: uploaded video or a live RTSP stream (tested with a local fake IP camera at ~9.6 fps).",
-    "Red box = the only part that needs the internet.",
-], y=270, h=250, size=19)
-notes(s, "If asked why no training: be direct. The learning problem we studied is the decision layer, i.e. which thresholds turn detections and VLM answers into alerts.")
+    "Inputs: an uploaded video or a live RTSP stream (tested with a local fake IP camera at about 9.6 fps).",
+    "Outputs: event type, severity 1-5, a written description, confidence, and a snapshot with boxes and zone drawn on it.",
+], y=300, h=230, size=17)
+notes(s, "Walk left to right. If asked why no training: the learning problem we studied is the decision layer, i.e. which thresholds turn detections and VLM answers into alerts.")
+
+# 3b ------------------------------------------------------------------------------------------ input / output screenshots
+s = slide("4. Input and output (screenshots)")
+pic(s, "report/shot_input.png", 30, 92, 270)
+pic(s, "report/shot_detect.png", 320, 92, 270)
+pic(s, "report/shot_alert.png", 640, 92, None, 372)
+text(s, "INPUT: one frame of Assault001 (320x240, 67 s into the video)", 30, 300, 280, 40, 13, True, NAVY)
+text(s, "After YOLO + ByteTrack: boxes with track IDs. The red polygon is the restricted zone; a person inside it (red box) triggers a breach.", 320, 300, 285, 70, 13, False, GREY)
+text(s, "OUTPUT: alert card on the dashboard (type, severity, description, confidence).", 640, 468, 300, 40, 13, True, NAVY)
+text(s, 'Gemini returns this JSON for the clip:\n{"event_type": "assault", "severity": 4, "confidence": 0.95,\n "description": "A group of individuals are physically attacking another person in an outdoor area..."}', 30, 375, 590, 90, 13, False, GREY)
+text(s, "Severity 4 >= 3, so an alert is raised and shown live.", 30, 470, 590, 30, 14, True, GREEN)
+notes(s, "Left: raw input. Middle: what the detector and tracker add. Right: the final output a guard sees. Real screenshots of our dashboard.")
+
+# 3c ------------------------------------------------------------------------------------------ models and setup
+s = slide("5. Models and the 'training' process")
+rows = [["Stage", "Model / method", "Trained by us?", "Key settings"],
+        ["Detection", "YOLOv8s (COCO pretrained, ~11M parameters)", "No (pretrained)", "640 px input; confidence 0.35; person, car, motorcycle, bus, truck"],
+        ["Tracking", "ByteTrack (Kalman filter + IoU matching)", "No (no learning)", "stable ID per object"],
+        ["Classification", "Gemini VLM, zero-shot, JSON output", "No (prompted)", "6 key frames per clip; 4 s before + 2 s after"],
+        ["Decision layer", "4 thresholds + zone rule", "Tuned, not trained", "severity >= 3; min 3 frames in zone; Gemini conf >= 0"]]
+table(s, rows, 30, 95, 900, [120, 300, 140, 340], 13, 190)
+bullets(s, [
+    "No gradient training took place: no labelled frames, only 6 video-level labels. Training a detector on that would overfit.",
+    "The learning-like step is tuning the 4 decision parameters on the 6 videos with a hand-written Coordinate Descent (next slides).",
+    "Protocol: cache all 136 Gemini answers once, then replay them offline for every candidate setting. Objective J = F1 - 0.05 x false-alarm alerts.",
+    "Tuning found J = 1.00 in 65 evaluations, but it is scored on the same videos it was tuned on, so we kept the defaults.",
+], y=300, h=230, size=16)
+notes(s, "Be direct that there is no model training. Training process = the tuning protocol; results come on slide 8.")
 
 # 5 ------------------------------------------------------------------------------------------ EDA
-s = slide("4. Exploratory analysis")
+s = slide("6. Exploratory analysis")
 pic(s, "report/eda_breaches_alerts.png", 30, 90, 560)
 pic(s, "report/eda_gemini_outputs.png", 30, 300, 560)
 bullets(s, [
@@ -158,7 +192,7 @@ bullets(s, [
 notes(s, "Figure left-top: breaches vs alerts per video. Left-bottom: what Gemini said. Point out the thin normal class and the non-informative confidence.")
 
 # 6 ------------------------------------------------------------------------------------------ tuning
-s = slide("5. Tuning with Coordinate Descent")
+s = slide("7. Tuning with Coordinate Descent")
 bullets(s, [
     "Tuned 4 decision parameters: alert severity, YOLO confidence, min frames in zone, min Gemini confidence.",
     "Coordinate Descent, written by hand: change one parameter at a time (1-D grid line search), keep it only if strictly better, repeat until a full cycle changes nothing.",
@@ -171,7 +205,7 @@ pic(s, "tuning_coordinate_descent.png", 520, 120, 410)
 notes(s, "This is the honest answer to 'did tuning help?': it found a better score, but the data cannot justify changing the defaults.")
 
 # 7 ------------------------------------------------------------------------------------------ results
-s = slide("6. Results and comparison with baselines")
+s = slide("8. Results and comparison with baselines")
 rows = [["System", "TP", "FP", "FN", "TN", "Prec.", "Recall", "F1"]]
 for k, v in B.items():
     rows.append([k.replace("Ours, severity>=1 (tuning result, NOT adopted)", "Tuned: severity >= 1 (not adopted)"), v["TP"], v["FP"], v["FN"], v["TN"], v["precision"], v["recall"], v["F1"]])
@@ -185,7 +219,7 @@ bullets(s, [
 notes(s, "Say clearly: we did not beat the zone-only baseline on this tiny set. The VLM's value here is fewer false alarms and explanations.")
 
 # 8 ------------------------------------------------------------------------------------------ insights
-s = slide("7. What the results mean")
+s = slide("9. What the results mean")
 bullets(s, [
     "Fighting002 was missed because the trigger only fires on zone entry; the clips sent to Gemini probably never showed the fight. This is a trigger-design limit, not a Gemini mistake (our explanation, not proven).",
     "Lowering the threshold to severity 1-2 'fixes' it, but for the wrong reason (an intrusion label, not the fight) and would likely cause false alarms on busy scenes.",
@@ -196,7 +230,7 @@ bullets(s, [
 notes(s, "Critical-insights slide: why, not just what.")
 
 # 9 ------------------------------------------------------------------------------------------ limitations
-s = slide("8. Limitations")
+s = slide("10. Limitations")
 bullets(s, [
     "6 videos, video-level labels; tuned and scored on the same data (no held-out test set).",
     "Normal class is nearly empty of people: false-alarm behaviour on busy normal scenes is untested.",
@@ -207,7 +241,7 @@ bullets(s, [
 ], size=19)
 
 # 10 ------------------------------------------------------------------------------------------ conclusion
-s = slide("9. Conclusion and future work")
+s = slide("11. Conclusion and future work")
 bullets(s, [
     "Problem addressed as a working system: upload or live RTSP in, described alerts on a live dashboard out.",
     "Success criterion: met against always-alert (0.857 vs 0.800), not met against zone-breach-only (0.857 vs 0.889).",
@@ -217,8 +251,35 @@ bullets(s, [
 ], size=20)
 text(s, "Code and README: github.com/Tanya-74/SmartCCTV_Project", 40, 470, 880, 30, 16, False, ACCENT)
 
-# 11 ------------------------------------------------------------------------------------------ demo
-s = slide("Live demo")
+# 12 ------------------------------------------------------------------------------------------ optimization (CS4101) 1
+O = json.loads((ROOT / "optimization" / "results.json").read_text())
+s = slide("12. Optimization view (CS4101): the problem")
+bullets(s, [
+    "Same project, same 6 videos: choose the alert settings x = (severity s, YOLO confidence c, min frames m, Gemini confidence q).",
+    "x lives on a discrete grid with 3,520 points. Maximise J(x) = F1(x) - 0.05 x FA(x), where FA = alerts on normal videos.",
+    "Equivalent constrained form: minimise -F1(x) subject to FA(x) <= 0, with bounds on every variable (handled by a penalty).",
+    "J is piecewise constant: it has no useful gradient, so gradient descent cannot be used. Each evaluation is a black-box replay (about 1 ms).",
+    "Algorithms implemented by hand: Coordinate Descent, Simulated Annealing, Random Search, Nelder-Mead; Grid Search as the exact reference.",
+    "Proposed improvement: a hybrid, Simulated Annealing for 120 evaluations, then Coordinate Descent to polish.",
+], size=19)
+notes(s, "Full details are in the separate CS4101 report and presentation.")
+
+# 13 ------------------------------------------------------------------------------------------ optimization 2
+s = slide("13. Optimization view (CS4101): results")
+rows = [["Method", "Reached best J (100 starts)", "Mean evaluations"],
+        ["Coordinate Descent", "77%", "about 51"], ["Simulated Annealing", "100%", "300"], ["Random Search", "100%", "300"],
+        ["Nelder-Mead", "21% (28% wide start)", "300 budget"], ["Hybrid SA + CD", "100%", "about 153"]]
+table(s, rows, 30, 95, 430, [170, 150, 110], 13, 200)
+pic(s, "optimization/convergence_multistart.png", 475, 95, 460)
+bullets(s, [
+    "Coordinate Descent is fastest but stalls on flat regions in 23% of starts; the hybrid fixes this at about half the cost of Simulated Annealing.",
+    "Random Search is as reliable here because 26% of all settings are optimal. The hybrid is not shown to beat it.",
+    "The optimum is in-sample (6 videos), so it demonstrates the methods, not a deployment result.",
+], x=30, y=345, w=900, h=180, size=16)
+notes(s, "Numbers come from optimization/results.json: 100 random starts, J* = 1.0. Be honest that random search matches the hybrid.")
+
+# 14 ------------------------------------------------------------------------------------------ demo
+s = slide("14. Live demo")
 bullets(s, [
     "1. Dashboard at http://127.0.0.1:8000: upload Assault001_x264.mp4 and watch alerts appear (needs internet).",
     "2. Live mode: fake RTSP camera at rtsp://127.0.0.1:8554/cam1 -> 'Connect a live camera'.",
