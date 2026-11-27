@@ -208,6 +208,54 @@ def demo_live(page, base: str, live_seconds: int):
     pause(page, 2)
 
 
+# ---------------------------------------------------------------- window / ending
+DEMO_TITLE = "Smart CCTV - automated demo"
+
+
+def place_browser(page, rect: str):
+    """Windows only: move the demo browser to x,y,width,height (screen pixels) and keep it above
+    other windows, so the screen recording shows it. (Edge ignores the --window-size flags.)"""
+    if sys.platform != "win32":
+        return
+    import ctypes
+    from ctypes import wintypes
+    x, y, w, h = (int(v) for v in rect.split(","))
+    page.evaluate("t => { document.title = t }", DEMO_TITLE)
+    page.wait_for_timeout(800)
+    u = ctypes.windll.user32
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        u.SetProcessDPIAware()
+    u.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND] + [ctypes.c_int] * 4 + [wintypes.UINT]
+
+    @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def visit(hwnd, _):
+        buf = ctypes.create_unicode_buffer(300)
+        u.GetWindowTextW(hwnd, buf, 300)
+        if DEMO_TITLE in buf.value:
+            u.ShowWindow(hwnd, 9)  # un-maximise
+            u.SetWindowPos(hwnd, wintypes.HWND(-1), x, y, w, h, 0x0040)
+        return True
+
+    u.EnumWindows(visit, 0)
+
+
+def finish_on_dashboard(page, seconds: int, ready_file: str | None):
+    """Hold the finished dashboard so a recording ends on a clear last frame."""
+    page.locator("#feed").evaluate(  # alert heading near the top, newest cards fully visible below it
+        "e => window.scrollTo(0, e.getBoundingClientRect().top + window.scrollY - 110)")
+    say(f"Demo finished. Showing the final alerts for {seconds} seconds.")
+    pause(page, seconds)
+    if ready_file:  # the launcher stops its recording while the dashboard is still visible
+        marker = Path(ready_file)
+        marker.write_text("ready")
+        for _ in range(300):
+            if not marker.exists():
+                break
+            page.wait_for_timeout(500)
+
+
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -217,13 +265,18 @@ def main():
     ap.add_argument("--upload-timeout", type=int, default=300, help="max seconds to wait for the upload job")
     ap.add_argument("--live-seconds", type=int, default=90, help="how long to watch the live stream")
     ap.add_argument("--headless", action="store_true", help="no visible window (for testing)")
+    ap.add_argument("--base-url", help="use this already running server instead of finding or starting one")
+    ap.add_argument("--window", help="(Windows) place the browser at x,y,width,height in screen pixels")
+    ap.add_argument("--end-seconds", type=int, default=10, help="how long to show the final dashboard")
+    ap.add_argument("--record-video", help="save a recording of the browser page to this .webm file")
+    ap.add_argument("--ready-file", help="(used by run_demo.py) signal file written before closing")
     a = ap.parse_args()
 
     video = (ROOT / a.video) if not Path(a.video).is_absolute() else Path(a.video)
     if a.mode in ("both", "upload") and not video.exists():
         sys.exit(f"Sample video not found: {video}")
 
-    base, server = ensure_server()
+    base, server = (a.base_url, None) if a.base_url else ensure_server()
     try:
         with sync_playwright() as p:
             try:
@@ -232,18 +285,30 @@ def main():
             except Exception:
                 browser = p.chromium.launch(headless=a.headless, slow_mo=a.slow_mo)
                 say("Opened Chromium.")
-            page = browser.new_page(viewport={"width": 1280, "height": 900})
+            view = {"no_viewport": True} if a.window else {"viewport": {"width": 1280, "height": 900}}
+            if a.record_video:
+                size = {"width": 1150, "height": 680}  # small enough to fit a scaled laptop screen
+                view = {"viewport": size, "record_video_size": size,
+                        "record_video_dir": str(Path(a.record_video).parent)}
+            context = browser.new_context(**view)
+            page = context.new_page()
             say(f"Opening the dashboard at {base} ...")
             page.goto(base)
             page.wait_for_selector("#feed")
+            if a.window and not a.record_video:  # resizing the window would crop a page recording
+                place_browser(page, a.window)
             say("Dashboard loaded. The green dot in the top-left means the live alert connection is on.")
             pause(page, 2)
             if a.mode in ("both", "upload"):
                 demo_upload(page, base, video, a.upload_timeout)
             if a.mode in ("both", "live"):
                 demo_live(page, base, a.live_seconds)
-            say("Demo finished. Leaving the window open for 10 more seconds...")
-            pause(page, 10)
+            finish_on_dashboard(page, a.end_seconds, a.ready_file)
+            context.close()  # this is what finalises a page recording
+            if a.record_video:
+                page.video.save_as(a.record_video)
+                page.video.delete()
+                say(f"Browser recording saved to {a.record_video}")
             browser.close()
     finally:
         if server is not None:

@@ -12,3 +12,6 @@ _slide*.png
 report/slide_preview/
 report/_build.log
 data/offline_test.log
+
+# screen recordings of the demo
+demo_recordings/
